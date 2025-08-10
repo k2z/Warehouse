@@ -20,6 +20,13 @@ import { ShipmentsComponent } from './pages/shipments/shipments.component';
         IncomesComponent,
         ShipmentsComponent
     ],
-    bootstrap: [AppComponent], imports: [BrowserModule,
-        AppRoutingModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+    bootstrap: [AppComponent],
+    imports: [
+      BrowserModule,
+      AppRoutingModule
+    ],
+    providers: [
+      provideHttpClient(withInterceptorsFromDi())
+    ],
+  })
 export class AppModule { }
