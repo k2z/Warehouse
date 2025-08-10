@@ -4,7 +4,6 @@ import { Component } from '@angular/core';
     selector: 'app-resources',
     templateUrl: './resources.component.html',
     styleUrl: './resources.component.css',
-    standalone: false
 })
 export class ResourcesComponent {
 
