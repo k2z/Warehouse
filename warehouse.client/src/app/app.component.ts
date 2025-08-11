@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterOutlet } from '@angular/router';
 
 interface WeatherForecast {
   date: string;
@@ -26,6 +26,7 @@ type NavigationSection = {
     styleUrl: './app.component.css',
     imports: [
       RouterLink,
+      RouterOutlet,
     ],
 })
 export class AppComponent implements OnInit {
