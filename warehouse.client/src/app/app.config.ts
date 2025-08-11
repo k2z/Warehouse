@@ -7,8 +7,23 @@ import { ClientsComponent } from "./pages/clients/clients.component";
 import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
+import { BalancesComponent } from "./pages/balances/balances.component";
+import { IncomesComponent } from "./pages/incomes/incomes.component";
+import { ShipmentsComponent } from "./pages/shipments/shipments.component";
 
 const routes: Routes = [
+  {
+    path: 'balances',
+    component: BalancesComponent,
+  },
+    {
+    path: 'incomes',
+    component: IncomesComponent,
+  },
+    {
+    path: 'shipments',
+    component: ShipmentsComponent,
+  },
   {
     path: 'resources',
     component: ResourcesComponent,
