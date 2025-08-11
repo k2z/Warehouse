@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TableModule } from 'primeng/table';
+import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 export enum FilteringType {
@@ -47,4 +47,9 @@ export class GridComponent {
       { resource: 'Sesame', measure: 'ISO container', quantity: 10 },
       { resource: 'Hemp', measure: 'ISO container', quantity: 10 },
   ];
+
+  lazyLoad: (event: TableLazyLoadEvent) => void = (event: TableLazyLoadEvent) => {
+    console.log(event);
+    // TODO
+  }
 }

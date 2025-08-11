@@ -5,6 +5,9 @@
   [rowsPerPageOptions]="[10, 25, 50]"
   [loading]="loading"
   [paginator]="true"
+  [lazy]="true"
+  [lazyLoadOnInit]="true"
+  (onLazyLoad)="lazyLoad($event)"
   >
   <ng-template #header>
     <tr>
