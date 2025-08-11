@@ -12,6 +12,7 @@ interface WeatherForecast {
 type NavigationItem = {
   title: string;
   path: string | null;
+  iconClass?: string;
 }
 
 type NavigationSection = {
@@ -34,17 +35,17 @@ export class AppComponent implements OnInit {
     {
       title: 'Склад',
       items: [
-        { title: 'Баланс', path: 'balances' },
-        { title: 'Поступления', path: 'incomes' },
-        { title: 'Отгрузки', path: 'shipments' },
+        { title: 'Баланс', path: 'balances', iconClass: 'bi bi-boxes' },
+        { title: 'Поступления', path: 'incomes', iconClass: 'bi bi-box-arrow-in-down' },
+        { title: 'Отгрузки', path: 'shipments', iconClass: 'bi bi-box-arrow-up' },
       ],
     },
     {
       title: 'Справочники',
       items: [
-        { title: 'Клиенты', path: 'clients' },
-        { title: 'Единицы измерения', path: 'measures' },
-        { title: 'Ресурсы', path: 'resources' },
+        { title: 'Клиенты', path: 'clients', iconClass: 'bi bi-file-earmark-person' },
+        { title: 'Единицы измерения', path: 'measures', iconClass: 'bi bi-beaker' },
+        { title: 'Ресурсы', path: 'resources', iconClass: 'bi bi-collection' },
       ],
     },
   ];

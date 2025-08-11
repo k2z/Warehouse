@@ -23,7 +23,10 @@
                         <ul class="nav flex-column mb-2">
                             <li class="nav-item me-auto">
                                 <a class="nav-link" [routerLink]="navitem.path">
-                                {{ navitem.title }}
+                                    @if (navitem.iconClass) {
+                                        <i [class]="navitem.iconClass"></i>
+                                    }
+                                    {{ navitem.title }}
                                 </a>
                             </li>
                         </ul>
