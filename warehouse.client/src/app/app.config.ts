@@ -10,6 +10,8 @@ import Aura from '@primeuix/themes/aura';
 import { BalancesComponent } from "./pages/balances/balances.component";
 import { IncomesComponent } from "./pages/incomes/incomes.component";
 import { ShipmentsComponent } from "./pages/shipments/shipments.component";
+import { provideStore } from "@ngrx/store";
+import { resourcesReducer } from "./state/resources/resources.reducer";
 
 const routes: Routes = [
   {
@@ -38,7 +40,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'resources',
+    redirectTo: 'balances',
   },
 ];
 
@@ -46,6 +48,10 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(withInterceptorsFromDi()),
     provideRouter(routes),
+    provideStore({
+      resources: resourcesReducer,
+      /* TODO */
+    }),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {

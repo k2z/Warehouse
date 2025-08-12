@@ -1,1 +1,9 @@
-<p>resources works!</p>
+<div class="container">
+    <p class="text-start h1">Ресурсы</p>
+
+    <app-grid
+      [items]="items$ | async"
+      [columns]="columns"
+      [loading]="isLoading$ | async">
+    </app-grid>
+</div>

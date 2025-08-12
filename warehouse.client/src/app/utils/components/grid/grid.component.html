@@ -1,6 +1,6 @@
 <p-table
   stripedRows
-  [value]="items"
+  [value]="items ? items.concat() : []"
   [totalRecords]="total"
   [rows]="10"
   [rowsPerPageOptions]="[10, 25, 50]"

@@ -33,9 +33,9 @@ export type Column = {
 })
 export class GridComponent {
   FilteringType = FilteringType;
-  @Input() loading: boolean = false;
+  @Input() loading: boolean | null = false;
   @Input() columns: Column[] = [];
-  @Input() items: any[] = [];
+  @Input() items: ReadonlyArray<any> | null = [];
 
   @Input() total: number = 6;
 
