@@ -11,9 +11,9 @@ namespace Warehouse.Server.Controllers
   public class ResourcesController : ControllerBase
   {
 
-    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly ILogger<ResourcesController> _logger;
 
-    public ResourcesController(ILogger<WeatherForecastController> logger)
+    public ResourcesController(ILogger<ResourcesController> logger)
     {
       _logger = logger;
     }

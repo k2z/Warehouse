@@ -10,9 +10,9 @@ namespace Warehouse.Server.Controllers
   public class MeasuresController : ControllerBase
   {
 
-    private readonly ILogger<WeatherForecastController> _logger;
+    private readonly ILogger<MeasuresController> _logger;
 
-    public MeasuresController(ILogger<WeatherForecastController> logger)
+    public MeasuresController(ILogger<MeasuresController> logger)
     {
       _logger = logger;
     }
