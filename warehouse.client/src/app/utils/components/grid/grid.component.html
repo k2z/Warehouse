@@ -1,13 +1,14 @@
 <p-table
   stripedRows
   [value]="items"
+  [totalRecords]="total"
   [rows]="10"
   [rowsPerPageOptions]="[10, 25, 50]"
   [loading]="loading"
   [paginator]="true"
-  [lazy]="true"
-  [lazyLoadOnInit]="true"
-  (onLazyLoad)="lazyLoad($event)"
+  [lazy]="lazyLoad ? true : false"
+  [lazyLoadOnInit]="lazyLoad ? true : undefined"
+  (onLazyLoad)="lazyLoad ? lazyLoad($event) : undefined"
   >
   <ng-template #header>
     <tr>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -33,23 +33,14 @@ export type Column = {
 })
 export class GridComponent {
   FilteringType = FilteringType;
-  public loading: boolean = false;
-  public columns: Column[] = [
-    { title: 'Ресурс', field: 'resource', filtering: FilteringType.MULTISELECT, multiselectOptions: [{ title: 'Rice', value: 'Rice' }, { title: 'Sesame', value: 'Sesame' }, { title: 'Hemp', value: 'Hemp' }] },
-    { title: 'Единица измерения', field: 'measure', filtering: FilteringType.NONE },
-    { title: 'Количество', field: 'quantity', filtering: FilteringType.NONE },
-  ];
-  public items: any[] = [
-      { resource: 'Rice', measure: 'kg', quantity: 10 },
-      { resource: 'Sesame', measure: 'kg', quantity: 10 },
-      { resource: 'Hemp', measure: 'kg', quantity: 10 },
-      { resource: 'Rice', measure: 'ISO container', quantity: 10 },
-      { resource: 'Sesame', measure: 'ISO container', quantity: 10 },
-      { resource: 'Hemp', measure: 'ISO container', quantity: 10 },
-  ];
+  @Input() loading: boolean = false;
+  @Input() columns: Column[] = [];
+  @Input() items: any[] = [];
 
-  lazyLoad: (event: TableLazyLoadEvent) => void = (event: TableLazyLoadEvent) => {
+  @Input() total: number = 6;
+
+  @Input() lazyLoad?: (event: TableLazyLoadEvent) => void = (event: TableLazyLoadEvent) => {
     console.log(event);
-    // TODO
+
   }
 }
