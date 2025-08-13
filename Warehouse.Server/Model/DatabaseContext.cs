@@ -1,7 +1,7 @@
 using Warehouse.Server.Model.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace AngularApp1.Server.Model
+namespace Warehouse.Server.Model
 {
   public class DatabaseContext : DbContext
   {

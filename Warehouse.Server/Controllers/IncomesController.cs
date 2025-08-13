@@ -1,6 +1,6 @@
-using AngularApp1.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Warehouse.Server.Model;
 using Warehouse.Server.Utils;
 
 namespace Warehouse.Server.Controllers

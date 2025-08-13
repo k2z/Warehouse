@@ -1,8 +1,7 @@
-using AngularApp1.Server.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Warehouse.Server.Model;
 using Warehouse.Server.Model.Entities;
-using Warehouse.Server.Model.DataTransferObjects;
 
 namespace Warehouse.Server.Controllers
 {
