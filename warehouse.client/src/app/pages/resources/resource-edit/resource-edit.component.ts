@@ -19,7 +19,7 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
   private http: HttpClient;
   private store: Store;
   private router: Router;
-
+  ResourceStatus = ResourceStatus;
   private destroyed: Subject<void> = new Subject<void>();
 
   model: Resource = { id: 0, name: '', status: ResourceStatus.Active, };
@@ -72,11 +72,11 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
     });
   }
 
-  onArchive() {
+  onUpdateStatus(status: ResourceStatus) {
     Object.keys(this.original!).forEach((fieldName) => {
       (this.model as any)[fieldName] = (this.original as any)[fieldName];
     });
-    this.model.status = ResourceStatus.Archived;
+    this.model.status = status;
     this.http.post<Resource>(`api/resources/update`, this.model).subscribe({
       next: (result) => {
         this.store.dispatch(ResourcesActions.updateResource({ item: result }));

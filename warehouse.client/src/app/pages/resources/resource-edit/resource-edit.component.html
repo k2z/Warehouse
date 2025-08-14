@@ -13,10 +13,20 @@
           [disabled]="!editForm.valid"
           (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
         @if (isEditingExisting()) {
-          <button
-            type="submit"
-            class="btn btn-warning ms-2"
-            (click)="onArchive()">В архив</button>
+          @switch(model.status) {
+            @case(ResourceStatus.Active) {
+              <button
+                type="submit"
+                class="btn btn-warning ms-2"
+                (click)="onUpdateStatus(ResourceStatus.Archived)">В архив</button>
+            }
+            @case(ResourceStatus.Archived) {
+              <button
+                type="submit"
+                class="btn btn-success ms-2"
+                (click)="onUpdateStatus(ResourceStatus.Active)">В активные</button>
+            }
+          }
           <button
             type="submit"
             class="btn btn-danger ms-2"
