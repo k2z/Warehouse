@@ -32,7 +32,8 @@ export const resourcesReducer = createReducer(
   on(ResourcesActions.deleteResource, (_state, { id }) => {
     const existingIndex = _state.items.findIndex(entity => entity.id === id);
     if (existingIndex > -1) {
-      const updatedItems = [ ..._state.items ].splice(existingIndex, 1);
+      const updatedItems = [ ..._state.items ];
+      updatedItems.splice(existingIndex, 1);
       return { ..._state, items: updatedItems };
     } else {
       return _state;

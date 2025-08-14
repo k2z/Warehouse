@@ -32,7 +32,7 @@ namespace Warehouse.Server.Controllers
     }
 
     [HttpPost("add")]
-    public async Task<ActionResult<Model.DataTransferObjects.Resource>> AddNewResource([FromBody]Model.DataTransferObjects.Resource newResource)
+    public async Task<ActionResult<Model.DataTransferObjects.Resource>> AddNewResource([FromBody] Model.DataTransferObjects.Resource newResource)
     {
       if (newResource.Name == null)
       {
@@ -63,6 +63,19 @@ namespace Warehouse.Server.Controllers
       }
       await db.SaveChangesAsync();
       return Ok(Model.DataTransferObjects.Resource.FromEntity(existing));
+    }
+
+    [HttpPost("delete")]
+    public async Task<IActionResult> DeleteResource(Model.DataTransferObjects.Resource deleted)
+    {
+      if (deleted.Id == null)
+      {
+        return BadRequest("deleted.id is null");
+      }
+      var entity = await db.Resources.SingleAsync(r => r.Id == deleted.Id);
+      db.Resources.Remove(entity);
+      await db.SaveChangesAsync();
+      return Ok();
     }
   }
 }

@@ -6,10 +6,22 @@
         <label for="editresourcename" class="form-label">Наименование</label>
         <input class="form-control" id="editresourcename" [(ngModel)]="model.name" [name]="'editresourcename'" required>
       </div>
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="!editForm.valid"
-        (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
+      <div class="mb-3">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!editForm.valid"
+          (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
+        @if (isEditingExisting()) {
+          <button
+            type="submit"
+            class="btn btn-warning ms-2"
+            (click)="onArchive()">В архив</button>
+          <button
+            type="submit"
+            class="btn btn-danger ms-2"
+            (click)="onDelete()">Удалить</button>
+        }
+      </div>
     </form>
 </div>

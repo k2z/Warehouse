@@ -25,6 +25,7 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
   model: Resource = { id: 0, name: '', status: ResourceStatus.Active, };
   isEditingExisting: WritableSignal<boolean> = signal(false);
   isLoading: WritableSignal<boolean> = signal(false);
+  private original?: Resource;
 
   constructor() {
     this.http = inject(HttpClient);
@@ -39,6 +40,7 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
       takeUntil(this.destroyed.asObservable())
     ).subscribe((value) => {
       if (value) {
+        this.original = value;
         Object.keys(value).forEach((fieldName) => {
           (this.model as any)[fieldName] = (value as any)[fieldName];
         });
@@ -60,6 +62,38 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
         } else {
           this.store.dispatch(ResourcesActions.addResource({ item: result }));
         }
+        this.router.navigateByUrl('/resources');
+      },
+      error: (err) => {
+        // TODO: notify error
+        console.error(err);
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  onArchive() {
+    Object.keys(this.original!).forEach((fieldName) => {
+      (this.model as any)[fieldName] = (this.original as any)[fieldName];
+    });
+    this.model.status = ResourceStatus.Archived;
+    this.http.post<Resource>(`api/resources/update`, this.model).subscribe({
+      next: (result) => {
+        this.store.dispatch(ResourcesActions.updateResource({ item: result }));
+        this.router.navigateByUrl('/resources');
+      },
+      error: (err) => {
+        // TODO: notify error
+        console.error(err);
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  onDelete() {
+    this.http.post<void>(`api/resources/delete`, this.model).subscribe({
+      next: () => {
+        this.store.dispatch(ResourcesActions.deleteResource({ id: this.model.id }));
         this.router.navigateByUrl('/resources');
       },
       error: (err) => {
