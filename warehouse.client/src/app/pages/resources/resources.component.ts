@@ -44,7 +44,7 @@ export class ResourcesComponent implements OnInit {
       takeWhile(isLoading => isLoading === null),
       mergeMap((val) => {
         console.log('inside mergeMap, will now return an HTTP get')
-        return this.http.get<Array<Resource>>('/resources/all');
+        return this.http.get<Array<Resource>>('api/resources');
       }),
     ).subscribe({
       next: (value) => {

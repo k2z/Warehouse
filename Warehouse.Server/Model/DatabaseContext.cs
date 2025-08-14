@@ -25,12 +25,12 @@ namespace Warehouse.Server.Model
       Database.EnsureCreated();
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-      optionsBuilder.UseSqlite("Data Source=warehouselocal.db");
-      // string connectionString = "Server=localhost;Database=warehouse;User Id=WarehouseNetappUser;Password=340$Uuxwp7Mcxo7Khy;";
-      // optionsBuilder.UseSqlServer(connectionString);
-    }
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    //   optionsBuilder.UseSqlite("Data Source=warehouselocal.db");
+    //   // string connectionString = "Server=localhost;Database=warehouse;User Id=WarehouseNetappUser;Password=340$Uuxwp7Mcxo7Khy;";
+    //   // optionsBuilder.UseSqlServer(connectionString);
+    // }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
