@@ -32,13 +32,17 @@ namespace Warehouse.Server.Controllers
     }
 
     [HttpPost("add")]
-    public async Task<IActionResult> AddNewResource(string name)
+    public async Task<ActionResult<Model.DataTransferObjects.Resource>> AddNewResource([FromBody]Model.DataTransferObjects.Resource newResource)
     {
-      Model.Entities.Resource newItem = new() { Name = name, Status = ResourceStatus.Active };
+      if (newResource.Name == null)
+      {
+        return BadRequest("Name should be defined");
+      }
+      Model.Entities.Resource newItem = new() { Name = newResource.Name, Status = ResourceStatus.Active };
       await db.Resources.AddAsync(newItem);
       await db.SaveChangesAsync();
-      var result = await db.Resources.SingleAsync(r => r.Name == name);
-      return Ok(result);
+      var result = await db.Resources.SingleAsync(r => r.Name == newResource.Name);
+      return Ok(Model.DataTransferObjects.Resource.FromEntity(result));
     }
 
     [HttpPost("update")]

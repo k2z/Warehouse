@@ -14,3 +14,8 @@ export const selectResourcesLoading = createSelector(
   selectFeature,
   (state: ResourcesState) => state.isLoading
 );
+
+export const selectResourceToEdit = createSelector(
+  selectFeature,
+  (state: ResourcesState) => state.editingResource
+);

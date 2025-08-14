@@ -1,0 +1,15 @@
+<div class="container">
+    <p class="text-start h1">Ресурсы</p>
+
+    <form #editForm="ngForm">
+      <div class="mb-3">
+        <label for="editresourcename" class="form-label">Наименование</label>
+        <input class="form-control" id="editresourcename" [(ngModel)]="model.name" [name]="'editresourcename'" required>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!editForm.valid"
+        (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
+    </form>
+</div>

@@ -12,6 +12,7 @@ import { IncomesComponent } from "./pages/incomes/incomes.component";
 import { ShipmentsComponent } from "./pages/shipments/shipments.component";
 import { provideStore } from "@ngrx/store";
 import { resourcesReducer } from "./state/resources/resources.reducer";
+import { ResourceEditComponent } from "./pages/resources/resource-edit/resource-edit.component";
 
 const routes: Routes = [
   {
@@ -29,6 +30,10 @@ const routes: Routes = [
   {
     path: 'resources',
     component: ResourcesComponent,
+  },
+  {
+    path: 'resources/edit',
+    component: ResourceEditComponent,
   },
   {
     path: 'measures',

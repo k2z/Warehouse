@@ -4,6 +4,10 @@
     <app-grid
       [items]="items$ | async"
       [columns]="columns"
-      [loading]="isLoading$ | async">
+      [loading]="isLoading$ | async"
+      [isActionsDisplayed]="true"
+      [addActionTitle]="'Добавить ресурс'"
+      (onAddClick)="onClickAddNewResource()"
+      (onRowClick)="onClickResource($event)">
     </app-grid>
 </div>

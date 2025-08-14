@@ -44,9 +44,10 @@ export class GridComponent {
   @Input() lazyLoad?: (event: TableLazyLoadEvent) => void;
 
   selected: any | null | undefined;
-  @Input() rowClick: (event: TableRowSelectEvent) => void = (event: TableRowSelectEvent) => {
-    console.log(event);
+  rowClick: (event: TableRowSelectEvent) => void = (event: TableRowSelectEvent) => {
+    this.onRowClick.emit(event);
   }
+  @Output() onRowClick = new EventEmitter<TableRowSelectEvent>();
 
   @Input() isActionsDisplayed: boolean = true;
   @Input() addActionTitle: string = 'Добавить';

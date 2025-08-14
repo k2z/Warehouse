@@ -7,6 +7,7 @@ export type ResourcesState = {
   items: ReadonlyArray<Resource>;
   isLoading: boolean | null;
   gridPageParams?: GridPageParams;
+  editingResource?: Resource;
 };
 
 export const initialState: ResourcesState = {
@@ -21,7 +22,8 @@ export const resourcesReducer = createReducer(
   on(ResourcesActions.updateResource, (_state, { item }) => {
     const existingIndex = _state.items.findIndex(entity => entity.id === item.id);
     if (existingIndex > -1) {
-      const updatedItems = [ ..._state.items ].splice(existingIndex, 1, item);
+      const updatedItems = [ ..._state.items ];
+      updatedItems.splice(existingIndex, 1, item);
       return { ..._state, items: updatedItems };
     } else {
       return _state;
@@ -38,5 +40,7 @@ export const resourcesReducer = createReducer(
   }),
   on(ResourcesActions.loadingResources, (_state, { gridPageParams }) => { return { ..._state, gridPageParams: gridPageParams, isLoading: true }; }),
   on(ResourcesActions.loadedResources, (_state, { items }) => { return { ..._state, items, isLoading: false }; }),
-  on(ResourcesActions.unloadResources, (_state, action) => initialState)
+  on(ResourcesActions.unloadResources, (_state, action) => initialState),
+  on(ResourcesActions.editResource, (_state, { item }) => { return { ..._state, editingResource: item }; }),
+  on(ResourcesActions.resetEditResource, (_state, { optional }) => { return { ..._state, editingResource: undefined }; })
 );

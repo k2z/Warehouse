@@ -3,3 +3,6 @@ Warehouse.Server/obj
 Warehouse.Server/.DS_Store
 .DS_Store
 Warehouse.Server/warehouselocal.db
+Warehouse.Server/warehouselocal.db-shm
+.gitignore
+Warehouse.Server/warehouselocal.db-wal

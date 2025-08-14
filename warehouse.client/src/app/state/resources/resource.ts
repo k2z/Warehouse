@@ -5,7 +5,7 @@ export enum ResourceStatus {
 }
 
 export type Resource = {
-  id: string;
+  id: number;
   name: string;
   status: ResourceStatus;
 }
