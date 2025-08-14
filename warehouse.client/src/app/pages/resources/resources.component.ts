@@ -42,9 +42,12 @@ export class ResourcesComponent implements OnInit {
   ngOnInit(): void {
     this.store.select(selectResourcesLoading).pipe(
       takeWhile(isLoading => isLoading === null),
+      tap((val) => {
+        setTimeout(() => { this.store.dispatch(ResourcesActions.loadingResources({})); });
+      }),
       mergeMap((val) => {
         console.log('inside mergeMap, will now return an HTTP get')
-        return this.http.get<Array<Resource>>('api/resources');
+        return this.http.get<Array<Resource>>('api/resources/all');
       }),
     ).subscribe({
       next: (value) => {
