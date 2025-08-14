@@ -9,7 +9,17 @@
   [lazy]="lazyLoad ? true : false"
   [lazyLoadOnInit]="lazyLoad ? true : undefined"
   (onLazyLoad)="lazyLoad ? lazyLoad($event) : undefined"
+  selectionMode="single"
+  [(selection)]="selected"
+  (onRowSelect)="rowClick($event)"
   >
+  @if(isActionsDisplayed) {
+    <ng-template #caption>
+      <div class="flex flex-wrap justify-end gap-2">
+        <p-button [label]="addActionTitle" icon="bi bi-plus-circle" text (onClick)="onAddClick.emit()" />
+      </div>
+    </ng-template>
+  }
   <ng-template #header>
     <tr>
       @for (columnData of columns; track columnData.field) {
@@ -49,8 +59,8 @@
       }
     </tr>
   </ng-template>
-  <ng-template #body let-item>
-    <tr style="height: 4rem;">
+  <ng-template #body let-rowData let-item>
+    <tr style="height: 4rem;" [pSelectableRow]="rowData">
       @for (columnData of columns; track columnData.field) {
         <td>{{ item[columnData.field] }}</td>
       }
