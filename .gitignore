@@ -1,2 +1,5 @@
 Warehouse.Server/bin
 Warehouse.Server/obj
+Warehouse.Server/.DS_Store
+.DS_Store
+Warehouse.Server/warehouselocal.db
