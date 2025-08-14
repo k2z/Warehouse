@@ -73,6 +73,7 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
   }
 
   onUpdateStatus(status: ResourceStatus) {
+    this.isLoading.set(true);
     Object.keys(this.original!).forEach((fieldName) => {
       (this.model as any)[fieldName] = (this.original as any)[fieldName];
     });
@@ -83,6 +84,7 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl('/resources');
       },
       error: (err) => {
+        this.isLoading.set(false);
         // TODO: notify error
         console.error(err);
         this.isLoading.set(false);
@@ -91,12 +93,14 @@ export class ResourceEditComponent implements OnInit, OnDestroy {
   }
 
   onDelete() {
+    this.isLoading.set(true);
     this.http.post<void>(`api/resources/delete`, this.model).subscribe({
       next: () => {
         this.store.dispatch(ResourcesActions.deleteResource({ id: this.model.id }));
         this.router.navigateByUrl('/resources');
       },
       error: (err) => {
+        this.isLoading.set(false);
         // TODO: notify error
         console.error(err);
         this.isLoading.set(false);

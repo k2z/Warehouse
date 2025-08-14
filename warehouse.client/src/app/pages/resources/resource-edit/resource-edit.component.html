@@ -4,13 +4,13 @@
     <form #editForm="ngForm">
       <div class="mb-3">
         <label for="editresourcename" class="form-label">Наименование</label>
-        <input class="form-control" id="editresourcename" [(ngModel)]="model.name" [name]="'editresourcename'" required>
+        <input class="form-control" id="editresourcename" [(ngModel)]="model.name" [name]="'editresourcename'" [disabled]="isLoading()" required>
       </div>
       <div class="mb-3">
         <button
           type="submit"
           class="btn btn-primary"
-          [disabled]="!editForm.valid"
+          [disabled]="!editForm.valid || isLoading()"
           (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
         @if (isEditingExisting()) {
           @switch(model.status) {
@@ -18,19 +18,22 @@
               <button
                 type="submit"
                 class="btn btn-warning ms-2"
-                (click)="onUpdateStatus(ResourceStatus.Archived)">В архив</button>
+                (click)="onUpdateStatus(ResourceStatus.Archived)"
+                [disabled]="isLoading()">В архив</button>
             }
             @case(ResourceStatus.Archived) {
               <button
                 type="submit"
                 class="btn btn-success ms-2"
-                (click)="onUpdateStatus(ResourceStatus.Active)">В активные</button>
+                (click)="onUpdateStatus(ResourceStatus.Active)"
+                [disabled]="isLoading()">В активные</button>
             }
           }
           <button
             type="submit"
             class="btn btn-danger ms-2"
-            (click)="onDelete()">Удалить</button>
+            (click)="onDelete()"
+            [disabled]="isLoading()">Удалить</button>
         }
       </div>
     </form>
