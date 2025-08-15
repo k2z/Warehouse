@@ -35,7 +35,7 @@
                 <ng-template #filter let-value let-filter="filterCallback">
                   <p-multiselect
                     [ngModel]="value"
-                    [options]="columnData.multiselectOptions"
+                    [options]="columnData.selectOptions"
                     placeholder="Все"
                     (onChange)="filter($event.value)"
                     optionLabel="title"
@@ -52,6 +52,29 @@
               </p-columnFilter>
             </th>
           }
+          @case(FilteringType.RESOURCESTATUS) {
+            <th>
+              <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
+                <ng-template #filter let-value let-filter="filterCallback">
+                  <p-select
+                    [ngModel]="value"
+                    [options]="columnData.selectOptions"
+                    optionLabel="title"
+                    optionValue="value"
+                    placeholder="Все"
+                    (onChange)="filter($event.value)"
+                    [showClear]="true"
+                    style="min-width: 12rem">
+                    <ng-template let-option #item>
+                      <p-tag
+                        [value]="option.title"
+                        [severity]="statusToPrimengSeverity(option.value)" />
+                    </ng-template>
+                  </p-select>
+                </ng-template>
+              </p-columnFilter>
+            </th>
+          }
           @default {
             <th></th>
           }
@@ -62,7 +85,21 @@
   <ng-template #body let-rowData let-item>
     <tr style="height: 4rem;" [pSelectableRow]="rowData">
       @for (columnData of columns; track columnData.field) {
-        <td>{{ item[columnData.field] }}</td>
+        @switch(columnData.type) {
+          @case(ColumnType.TEXT) {
+            <td>{{ item[columnData.field] }}</td>
+          }
+          @case(ColumnType.RESOURCESTATUS) {
+            <td>
+              <p-tag
+                [value]="item[columnData.field] | resourceStatus"
+                [severity]="statusToPrimengSeverity(item[columnData.field])" />
+            </td>
+          }
+          @default {
+            <td><span>TODO</span></td>
+          }
+        }
       }
     </tr>
   </ng-template>

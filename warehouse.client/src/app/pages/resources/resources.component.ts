@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Column, FilteringType, GridComponent } from '../../utils/components/grid/grid.component';
+import { Column, ColumnType, FilteringType, GridComponent } from '../../utils/components/grid/grid.component';
 import { Store } from '@ngrx/store';
 import { map, mergeMap, Observable, takeWhile, tap } from 'rxjs';
-import { Resource } from '../../state/resources/resource';
+import { Resource, ResourceStatus } from '../../state/resources/resource';
 import { selectResources, selectResourcesLoading } from '../../state/resources/resources.selector';
 import { HttpClient } from '@angular/common/http';
 import { ResourcesActions } from '../../state/resources/resources.actions';
@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { fetchActiveResources } from '../../utils/common';
 import { Router } from '@angular/router';
 import { TableRowSelectEvent } from 'primeng/table';
+import { resourceStatusName } from '../../utils/pipes/resource-status.pipe';
 
 @Component({
   selector: 'app-resources',
@@ -30,8 +31,19 @@ export class ResourcesComponent implements OnInit {
   public readonly columns: Column[] = [
     {
       field: 'name',
+      type: ColumnType.TEXT,
       filtering: FilteringType.NONE,
       title: 'Наименование',
+    },
+    {
+      field: 'status',
+      type: ColumnType.RESOURCESTATUS,
+      filtering: FilteringType.RESOURCESTATUS,
+      title: 'Статус',
+      selectOptions: [
+        { title: resourceStatusName(ResourceStatus.Active), value: ResourceStatus.Active },
+        { title: resourceStatusName(ResourceStatus.Archived), value: ResourceStatus.Archived },
+      ],
     },
   ];
 

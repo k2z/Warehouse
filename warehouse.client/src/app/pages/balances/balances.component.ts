@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Column, FilteringType, GridComponent } from '../../utils/components/grid/grid.component';
+import { Column, ColumnType, FilteringType, GridComponent } from '../../utils/components/grid/grid.component';
 
 @Component({
   selector: 'app-balances',
@@ -19,9 +19,9 @@ export class BalancesComponent {
     { resource: 'Hemp', measure: 'ISO container', quantity: 10 },
   ];
   columns: Column[] = [
-    { title: 'Ресурс', field: 'resource', filtering: FilteringType.MULTISELECT, multiselectOptions: [{ title: 'Rice', value: 'Rice' }, { title: 'Sesame', value: 'Sesame' }, { title: 'Hemp', value: 'Hemp' }] },
-    { title: 'Единица измерения', field: 'measure', filtering: FilteringType.NONE },
-    { title: 'Количество', field: 'quantity', filtering: FilteringType.NONE },
+    { title: 'Ресурс', field: 'resource', type: ColumnType.TEXT, filtering: FilteringType.MULTISELECT, selectOptions: [{ title: 'Rice', value: 'Rice' }, { title: 'Sesame', value: 'Sesame' }, { title: 'Hemp', value: 'Hemp' }] },
+    { title: 'Единица измерения', field: 'measure', type: ColumnType.TEXT, filtering: FilteringType.NONE },
+    { title: 'Количество', field: 'quantity', type: ColumnType.TEXT, filtering: FilteringType.NONE },
   ]
 
 }

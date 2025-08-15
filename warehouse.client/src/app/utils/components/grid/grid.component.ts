@@ -3,23 +3,34 @@ import { FormsModule } from '@angular/forms';
 import { TableLazyLoadEvent, TableModule, TableRowSelectEvent } from 'primeng/table';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { SelectModule } from 'primeng/select';
+import { ResourceStatus } from '../../../state/resources/resource';
+import { ResourceStatusPipe } from '../../pipes/resource-status.pipe';
+
+export enum ColumnType {
+  TEXT,
+  RESOURCESTATUS,
+}
 
 export enum FilteringType {
   NONE,
+  RESOURCESTATUS,
   MULTISELECT,
   DATERANGE,
 }
 
-export type FilterMultiselectOption = {
+export type FilterSelectOption = {
   title: string;
-  value: string;
+  value: string | number;
 }
 
 export type Column = {
   title: string;
   field: string;
+  type: ColumnType;
   filtering: FilteringType;
-  multiselectOptions?: Array<FilterMultiselectOption>;
+  selectOptions?: Array<FilterSelectOption>;
 };
 
 @Component({
@@ -30,11 +41,16 @@ export type Column = {
     FormsModule,
     TableModule,
     ButtonModule,
+    TagModule,
     MultiSelectModule,
+    SelectModule,
+    ResourceStatusPipe,
   ],
 })
 export class GridComponent {
+  ColumnType = ColumnType;
   FilteringType = FilteringType;
+  statusToPrimengSeverity = statusToPrimengSeverity;
   @Input() loading: boolean | null = false;
   @Input() columns: Column[] = [];
   @Input() items: ReadonlyArray<any> | null = [];
@@ -52,4 +68,27 @@ export class GridComponent {
   @Input() isActionsDisplayed: boolean = true;
   @Input() addActionTitle: string = 'Добавить';
   @Output() onAddClick = new EventEmitter<void>();
+}
+
+enum PrimeNgSeverities {
+  gray = 'Primary',
+  lightgray = 'secondary',
+  green = 'success',
+  blue = 'info',
+  yellow = 'warn',
+  red = 'danger',
+  black = 'contrast',
+}
+
+export function statusToPrimengSeverity(status: string | number): string {
+  switch (status) {
+    case ResourceStatus.Active:
+      return PrimeNgSeverities.green;
+    case ResourceStatus.Archived:
+      return PrimeNgSeverities.yellow;
+    case ResourceStatus.Deleted:
+      return PrimeNgSeverities.black;
+    default:
+      return PrimeNgSeverities.gray;
+  }
 }
