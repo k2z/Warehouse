@@ -1,8 +1,13 @@
 <div class="container">
     <p class="text-start h1">Клиенты</p>
 
-    <!-- <app-grid
-      [items]="items"
-      [columns]="columns">
-    </app-grid> -->
+    <app-grid
+      [items]="items$ | async"
+      [columns]="columns"
+      [loading]="isLoading$ | async"
+      [isActionsDisplayed]="true"
+      [addActionTitle]="'Добавить клиента'"
+      (onAddClick)="onClickAddNewClient()"
+      (onRowClick)="onClickClient($event)">
+    </app-grid>
 </div>

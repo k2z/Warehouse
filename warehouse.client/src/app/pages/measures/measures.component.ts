@@ -64,7 +64,6 @@ export class MeasuresComponent implements OnInit {
 
   onClickResource(event: TableRowSelectEvent) {
     const item: Measure = event.data;
-    console.log(item);
     this.store.dispatch(MeasuresActions.editMeasure({ item }));
     this.router.navigateByUrl('/measures/edit');
   }

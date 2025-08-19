@@ -15,6 +15,8 @@ import { resourcesReducer } from "./state/resources/resources.reducer";
 import { ResourceEditComponent } from "./pages/resources/resource-edit/resource-edit.component";
 import { MeasureEditComponent } from "./pages/measures/measure-edit/measure-edit.component";
 import { measuresReducer } from "./state/measures/measures.reducer";
+import { clientsReducer } from "./state/clients/clients.reducer";
+import { ClientEditComponent } from "./pages/clients/client-edit/client-edit.component";
 
 const routes: Routes = [
   {
@@ -50,6 +52,10 @@ const routes: Routes = [
     component: ClientsComponent,
   },
   {
+    path: 'clients/edit',
+    component: ClientEditComponent,
+  },
+  {
     path: '**',
     redirectTo: 'balances',
   },
@@ -62,6 +68,7 @@ export const appConfig: ApplicationConfig = {
     provideStore({
       resources: resourcesReducer,
       measures: measuresReducer,
+      clients: clientsReducer,
       /* TODO */
     }),
     provideAnimationsAsync(),

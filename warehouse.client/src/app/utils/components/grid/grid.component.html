@@ -52,7 +52,7 @@
               </p-columnFilter>
             </th>
           }
-          @case(FilteringType.RESOURCESTATUS || FilteringType.MEASURESTATUS) {
+          @case(FilteringType.RESOURCESTATUS || FilteringType.MEASURESTATUS || FilteringType.CLIENTSTATUS) {
             <th>
               <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
                 <ng-template #filter let-value let-filter="filterCallback">
@@ -100,6 +100,13 @@
             <td>
               <p-tag
                 [value]="item[columnData.field] | measureStatus"
+                [severity]="statusToPrimengSeverity(item[columnData.field])" />
+            </td>
+          }
+          @case(ColumnType.CLIENTSTATUS) {
+            <td>
+              <p-tag
+                [value]="item[columnData.field] | clientStatus"
                 [severity]="statusToPrimengSeverity(item[columnData.field])" />
             </td>
           }

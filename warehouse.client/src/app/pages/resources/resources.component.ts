@@ -64,7 +64,6 @@ export class ResourcesComponent implements OnInit {
 
   onClickResource(event: TableRowSelectEvent) {
     const item: Resource = event.data;
-    console.log(item);
     this.store.dispatch(ResourcesActions.editResource({ item }));
     this.router.navigateByUrl('/resources/edit');
   }

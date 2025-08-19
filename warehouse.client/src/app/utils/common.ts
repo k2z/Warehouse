@@ -6,6 +6,9 @@ import { HttpClient } from "@angular/common/http";
 import { Resource } from "../state/resources/resource";
 import { MeasuresActions } from "../state/measures/measures.actions";
 import { Measure } from "../state/measures/measure";
+import { selectClientsLoading } from "../state/clients/clients.selector";
+import { ClientsActions } from "../state/clients/clients.actions";
+import { Client } from "../state/clients/client";
 
 export function fetchActiveResources(store: Store, http: HttpClient) {
   store.select(selectResourcesLoading).pipe(
@@ -57,3 +60,27 @@ export function fetchActiveMeasures(store: Store, http: HttpClient) {
     });
 }
 
+export function fetchActiveClients(store: Store, http: HttpClient) {
+  store.select(selectClientsLoading).pipe(
+    takeWhile(isLoading => isLoading === null),
+      tap((val) => {
+        setTimeout(() => { store.dispatch(ClientsActions.loadingClients({})); });
+      }),
+      mergeMap((val) => {
+        console.log('inside mergeMap, will now return an HTTP get')
+        return http.get<Array<Client>>('api/clients/all');
+      }),
+    ).subscribe({
+      next: (value) => {
+        console.log('Pipe Next: loaded an array of items', value);
+        store.dispatch(ClientsActions.loadedClients({ items: value }));
+      },
+      error: (err) => {
+        console.log('Failed measures loading');
+        console.error(err);
+      },
+      complete: () => {
+        console.log('Measures loading complete');
+      }
+    });
+}

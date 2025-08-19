@@ -8,17 +8,20 @@ import { SelectModule } from 'primeng/select';
 import { ResourceStatus } from '../../../state/resources/resource';
 import { ResourceStatusPipe } from '../../pipes/resource-status.pipe';
 import { MeasureStatusPipe } from '../../pipes/measure-status.pipe';
+import { ClientStatusPipe } from '../../pipes/client-status.pipe';
 
 export enum ColumnType {
   TEXT,
   RESOURCESTATUS,
   MEASURESTATUS,
+  CLIENTSTATUS,
 }
 
 export enum FilteringType {
   NONE,
   RESOURCESTATUS,
   MEASURESTATUS,
+  CLIENTSTATUS,
   MULTISELECT,
   DATERANGE,
 }
@@ -49,6 +52,7 @@ export type Column = {
     SelectModule,
     ResourceStatusPipe,
     MeasureStatusPipe,
+    ClientStatusPipe,
   ],
 })
 export class GridComponent {

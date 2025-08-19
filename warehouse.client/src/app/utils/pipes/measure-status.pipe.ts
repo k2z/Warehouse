@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ResourceStatus } from '../../state/resources/resource';
 import { MeasureStatus } from '../../state/measures/measure';
 
 @Pipe({

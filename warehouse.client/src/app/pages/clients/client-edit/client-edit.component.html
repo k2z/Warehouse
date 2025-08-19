@@ -1,10 +1,14 @@
 <div class="container">
-    <p class="text-start h1">Единицы измерения</p>
+    <p class="text-start h1">Клиенты</p>
 
     <form #editForm="ngForm">
       <div class="mb-3">
-        <label for="editresourcename" class="form-label">Единица измерения</label>
+        <label for="editresourcename" class="form-label">Название</label>
         <input class="form-control" id="editresourcename" [(ngModel)]="model.name" [name]="'editresourcename'" [disabled]="isLoading()" required>
+      </div>
+      <div class="mb-3">
+        <label for="editadress" class="form-label">Адрес</label>
+        <input class="form-control" id="editadress" [(ngModel)]="model.address" [name]="'editadress'" [disabled]="isLoading()" required>
       </div>
       <div class="mb-3">
         <button
@@ -14,18 +18,18 @@
           (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
         @if (isEditingExisting()) {
           @switch(model.status) {
-            @case(MeasureStatus.Active) {
+            @case(ClientStatus.Active) {
               <button
                 type="submit"
                 class="btn btn-warning ms-2"
-                (click)="onUpdateStatus(MeasureStatus.Archived)"
+                (click)="onUpdateStatus(ClientStatus.Archived)"
                 [disabled]="isLoading()">В архив</button>
             }
-            @case(MeasureStatus.Archived) {
+            @case(ClientStatus.Archived) {
               <button
                 type="submit"
                 class="btn btn-success ms-2"
-                (click)="onUpdateStatus(MeasureStatus.Active)"
+                (click)="onUpdateStatus(ClientStatus.Active)"
                 [disabled]="isLoading()">В активные</button>
             }
           }
