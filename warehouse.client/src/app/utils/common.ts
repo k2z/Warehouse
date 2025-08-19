@@ -4,6 +4,8 @@ import { mergeMap, takeWhile, tap } from "rxjs";
 import { ResourcesActions } from "../state/resources/resources.actions";
 import { HttpClient } from "@angular/common/http";
 import { Resource } from "../state/resources/resource";
+import { MeasuresActions } from "../state/measures/measures.actions";
+import { Measure } from "../state/measures/measure";
 
 export function fetchActiveResources(store: Store, http: HttpClient) {
   store.select(selectResourcesLoading).pipe(
@@ -29,3 +31,29 @@ export function fetchActiveResources(store: Store, http: HttpClient) {
       }
     });
 }
+
+export function fetchActiveMeasures(store: Store, http: HttpClient) {
+  store.select(selectResourcesLoading).pipe(
+    takeWhile(isLoading => isLoading === null),
+      tap((val) => {
+        setTimeout(() => { store.dispatch(MeasuresActions.loadingMeasures({})); });
+      }),
+      mergeMap((val) => {
+        console.log('inside mergeMap, will now return an HTTP get')
+        return http.get<Array<Measure>>('api/measures/all');
+      }),
+    ).subscribe({
+      next: (value) => {
+        console.log('Pipe Next: loaded an array of items', value);
+        store.dispatch(MeasuresActions.loadedMeasures({ items: value }));
+      },
+      error: (err) => {
+        console.log('Failed measures loading');
+        console.error(err);
+      },
+      complete: () => {
+        console.log('Measures loading complete');
+      }
+    });
+}
+

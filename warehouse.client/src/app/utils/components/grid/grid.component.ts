@@ -7,15 +7,18 @@ import { TagModule } from 'primeng/tag';
 import { SelectModule } from 'primeng/select';
 import { ResourceStatus } from '../../../state/resources/resource';
 import { ResourceStatusPipe } from '../../pipes/resource-status.pipe';
+import { MeasureStatusPipe } from '../../pipes/measure-status.pipe';
 
 export enum ColumnType {
   TEXT,
   RESOURCESTATUS,
+  MEASURESTATUS,
 }
 
 export enum FilteringType {
   NONE,
   RESOURCESTATUS,
+  MEASURESTATUS,
   MULTISELECT,
   DATERANGE,
 }
@@ -45,6 +48,7 @@ export type Column = {
     MultiSelectModule,
     SelectModule,
     ResourceStatusPipe,
+    MeasureStatusPipe,
   ],
 })
 export class GridComponent {

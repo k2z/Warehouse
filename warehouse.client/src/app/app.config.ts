@@ -13,6 +13,8 @@ import { ShipmentsComponent } from "./pages/shipments/shipments.component";
 import { provideStore } from "@ngrx/store";
 import { resourcesReducer } from "./state/resources/resources.reducer";
 import { ResourceEditComponent } from "./pages/resources/resource-edit/resource-edit.component";
+import { MeasureEditComponent } from "./pages/measures/measure-edit/measure-edit.component";
+import { measuresReducer } from "./state/measures/measures.reducer";
 
 const routes: Routes = [
   {
@@ -40,6 +42,10 @@ const routes: Routes = [
     component: MeasuresComponent,
   },
   {
+    path: 'measures/edit',
+    component: MeasureEditComponent,
+  },
+  {
     path: 'clients',
     component: ClientsComponent,
   },
@@ -55,6 +61,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideStore({
       resources: resourcesReducer,
+      measures: measuresReducer,
       /* TODO */
     }),
     provideAnimationsAsync(),

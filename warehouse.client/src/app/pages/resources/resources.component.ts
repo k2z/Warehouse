@@ -15,7 +15,6 @@ import { resourceStatusName } from '../../utils/pipes/resource-status.pipe';
 @Component({
   selector: 'app-resources',
   templateUrl: './resources.component.html',
-  styleUrl: './resources.component.css',
   imports: [
     CommonModule,
     GridComponent,

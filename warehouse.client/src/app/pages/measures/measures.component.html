@@ -1,8 +1,13 @@
 <div class="container">
     <p class="text-start h1">Единицы измерения</p>
 
-    <!-- <app-grid
-      [items]="[]"
-      [columns]="[]">
-    </app-grid> -->
+    <app-grid
+      [items]="items$ | async"
+      [columns]="columns"
+      [loading]="isLoading$ | async"
+      [isActionsDisplayed]="true"
+      [addActionTitle]="'Добавить единицу измерения'"
+      (onAddClick)="onClickAddNewResource()"
+      (onRowClick)="onClickResource($event)">
+    </app-grid>
 </div>

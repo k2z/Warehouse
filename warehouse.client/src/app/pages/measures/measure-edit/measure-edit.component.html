@@ -1,0 +1,40 @@
+<div class="container">
+    <p class="text-start h1">Ресурсы</p>
+
+    <form #editForm="ngForm">
+      <div class="mb-3">
+        <label for="editresourcename" class="form-label">Единица измерения</label>
+        <input class="form-control" id="editresourcename" [(ngModel)]="model.name" [name]="'editresourcename'" [disabled]="isLoading()" required>
+      </div>
+      <div class="mb-3">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!editForm.valid || isLoading()"
+          (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
+        @if (isEditingExisting()) {
+          @switch(model.status) {
+            @case(MeasureStatus.Active) {
+              <button
+                type="submit"
+                class="btn btn-warning ms-2"
+                (click)="onUpdateStatus(MeasureStatus.Archived)"
+                [disabled]="isLoading()">В архив</button>
+            }
+            @case(MeasureStatus.Archived) {
+              <button
+                type="submit"
+                class="btn btn-success ms-2"
+                (click)="onUpdateStatus(MeasureStatus.Active)"
+                [disabled]="isLoading()">В активные</button>
+            }
+          }
+          <button
+            type="submit"
+            class="btn btn-danger ms-2"
+            (click)="onDelete()"
+            [disabled]="isLoading()">Удалить</button>
+        }
+      </div>
+    </form>
+</div>
