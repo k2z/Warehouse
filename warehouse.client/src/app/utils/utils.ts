@@ -19,3 +19,8 @@ export type GridPageParams = {
   take?: number;
   filters?: GridFilters;
 };
+
+export type Page<TItem> = {
+  count: number;
+  items: Array<TItem>;
+};

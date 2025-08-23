@@ -1,1 +1,15 @@
-<p>incomes works!</p>
+<div class="container">
+    <p class="text-start h1">Поступления</p>
+
+    <app-grid
+      [items]="items$ | async"
+      [total]="(itemsCount$ | async) ?? 0"
+      [columns]="columns"
+      [loading]="isLoading$ | async"
+      [lazyLoad]="lazyLoad"
+      [isActionsDisplayed]="true"
+      [addActionTitle]="'Добавить документ поступления'"
+      (onAddClick)="onClickAddNewIncome()"
+      (onRowClick)="onClickIncome($event)">
+    </app-grid>
+</div>

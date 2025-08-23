@@ -17,6 +17,7 @@ import { MeasureEditComponent } from "./pages/measures/measure-edit/measure-edit
 import { measuresReducer } from "./state/measures/measures.reducer";
 import { clientsReducer } from "./state/clients/clients.reducer";
 import { ClientEditComponent } from "./pages/clients/client-edit/client-edit.component";
+import { incomesReducer } from "./state/incomes/incomes.reducer";
 
 const routes: Routes = [
   {
@@ -69,6 +70,7 @@ export const appConfig: ApplicationConfig = {
       resources: resourcesReducer,
       measures: measuresReducer,
       clients: clientsReducer,
+      incomes: incomesReducer,
       /* TODO */
     }),
     provideAnimationsAsync(),

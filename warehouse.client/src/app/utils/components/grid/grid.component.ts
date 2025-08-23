@@ -63,7 +63,7 @@ export class GridComponent {
   @Input() columns: Column[] = [];
   @Input() items: ReadonlyArray<any> | null = [];
 
-  @Input() total: number = 6;
+  @Input() total: number = 0;
 
   @Input() lazyLoad?: (event: TableLazyLoadEvent) => void;
 

@@ -9,6 +9,7 @@ import { Measure } from "../state/measures/measure";
 import { selectClientsLoading } from "../state/clients/clients.selector";
 import { ClientsActions } from "../state/clients/clients.actions";
 import { Client } from "../state/clients/client";
+import { selectMeasuresLoading } from "../state/measures/measures.selector";
 
 export function fetchActiveResources(store: Store, http: HttpClient) {
   store.select(selectResourcesLoading).pipe(
@@ -36,7 +37,7 @@ export function fetchActiveResources(store: Store, http: HttpClient) {
 }
 
 export function fetchActiveMeasures(store: Store, http: HttpClient) {
-  store.select(selectResourcesLoading).pipe(
+  store.select(selectMeasuresLoading).pipe(
     takeWhile(isLoading => isLoading === null),
       tap((val) => {
         setTimeout(() => { store.dispatch(MeasuresActions.loadingMeasures({})); });

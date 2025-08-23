@@ -1,10 +1,99 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Column, ColumnType, FilteringType, GridComponent } from '../../utils/components/grid/grid.component';
+import { combineLatest, map, Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { HttpClient } from '@angular/common/http';
+import { Income } from '../../state/incomes/income';
+import { selectIncomes, selectIncomesCount, selectIncomesLoading } from '../../state/incomes/incomes.selector';
+import { fetchActiveClients, fetchActiveMeasures, fetchActiveResources } from '../../utils/common';
+import { selectResourcesLoading } from '../../state/resources/resources.selector';
+import { selectMeasuresLoading } from '../../state/measures/measures.selector';
+import { selectClientsLoading } from '../../state/clients/clients.selector';
+import { TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
+import { Page } from '../../utils/utils';
+import { IncomesActions } from '../../state/incomes/incomes.actions';
 
 @Component({
-    selector: 'app-incomes',
-    templateUrl: './incomes.component.html',
-    styleUrl: './incomes.component.css',
+  selector: 'app-incomes',
+  templateUrl: './incomes.component.html',
+  imports: [
+    CommonModule,
+    GridComponent,
+  ],
 })
-export class IncomesComponent {
+export class IncomesComponent implements OnInit, OnDestroy {
+  private http: HttpClient;
+  private store: Store;
+  private router: Router;
+  public items$: Observable<ReadonlyArray<Income>>;
+  public itemsCount$: Observable<number>;
+  public isLoading$: Observable<boolean>;
 
+  public readonly columns: Column[] = [
+    {
+      field: 'number',
+      type: ColumnType.TEXT,
+      filtering: FilteringType.MULTISELECT,
+      title: 'Номер',
+    },
+    /*
+      TODO: columns for Resources and Measurements
+    */
+  ];
+
+  constructor() {
+    this.http = inject(HttpClient);
+    this.store = inject(Store);
+    this.router = inject(Router);
+    this.items$ = this.store.select(selectIncomes);
+    this.itemsCount$ = this.store.select(selectIncomesCount);
+    this.isLoading$ = combineLatest(
+      [
+        this.store.select(selectIncomesLoading),
+        this.store.select(selectResourcesLoading),
+        this.store.select(selectMeasuresLoading),
+        this.store.select(selectClientsLoading),
+      ],
+      (loadingIncomes, loadingResources, loadingMeasures, loadingClients) => {
+        return (loadingIncomes ?? true) ||
+          (loadingResources ?? true) ||
+          (loadingMeasures ?? true) ||
+          (loadingClients ?? true);
+      }
+    );
+  }
+
+  lazyLoad: (e: TableLazyLoadEvent) => void = (gridLoadEvent) => {
+    console.log(gridLoadEvent);
+    this.http.get<Page<Income>>(`api/incomes/all?skip=${
+        gridLoadEvent.first ?? 0
+      }&take=${
+        (gridLoadEvent.last ?? 10) - (gridLoadEvent.first ?? 0)
+      }&filter=${'todo'}`)
+      .subscribe(page => {
+        this.store.dispatch(IncomesActions.loadedIncomes(page));
+      });
+  };
+
+  ngOnInit(): void {
+    fetchActiveClients(this.store, this.http);
+    fetchActiveResources(this.store, this.http);
+    fetchActiveMeasures(this.store, this.http);
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(IncomesActions.unloadIncomes({}));
+  }
+
+  onClickAddNewIncome() {
+    this.router.navigateByUrl('/incomes/edit');
+  }
+
+  onClickIncome(event: TableRowSelectEvent) {
+    const item: Income = event.data;
+    this.store.dispatch(IncomesActions.editIncome({ item }));
+    this.router.navigateByUrl('/incomes/edit');
+  }
 }
