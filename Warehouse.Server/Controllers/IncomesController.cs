@@ -64,9 +64,9 @@ namespace Warehouse.Server.Controllers
       return Ok(result);
     }
 
-    [HttpPost("new")]
+    [HttpPost("add")]
     public async Task<ActionResult<Model.DataTransferObjects.Income>> CreateIncome(
-      Model.DataTransferObjects.Income newIncome
+      [FromBody]Model.DataTransferObjects.Income newIncome
     )
     {
       if (newIncome.Number == null)

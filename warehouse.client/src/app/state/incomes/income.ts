@@ -11,6 +11,7 @@ export type IncomeResource = {
 export type Income = {
   id: number;
   number: string;
-  date: Date;
+  date: string;
+  // dateValue?: Date;
   items: Array<IncomeResource>;
 }

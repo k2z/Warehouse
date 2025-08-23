@@ -10,6 +10,10 @@ export function buildId(length: number = 5): string {
   return result;
 }
 
+export function dateToDateOnly(source: Date): string {
+  return source.toISOString().slice(0, 10);
+}
+
 export type GridFilters = {
   [s: string]: FilterMetadata | FilterMetadata[] | undefined;
 };

@@ -18,17 +18,22 @@ import { measuresReducer } from "./state/measures/measures.reducer";
 import { clientsReducer } from "./state/clients/clients.reducer";
 import { ClientEditComponent } from "./pages/clients/client-edit/client-edit.component";
 import { incomesReducer } from "./state/incomes/incomes.reducer";
+import { IncomeEditComponent } from "./pages/incomes/income-edit/income-edit.component";
 
 const routes: Routes = [
   {
     path: 'balances',
     component: BalancesComponent,
   },
-    {
+  {
     path: 'incomes',
     component: IncomesComponent,
   },
-    {
+  {
+    path: 'incomes/edit',
+    component: IncomeEditComponent,
+  },
+  {
     path: 'shipments',
     component: ShipmentsComponent,
   },

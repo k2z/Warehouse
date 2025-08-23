@@ -31,8 +31,6 @@ export class ClientEditComponent implements OnInit, OnDestroy {
     this.http = inject(HttpClient);
     this.store = inject(Store);
     this.router = inject(Router);
-    // this.items$ = this.store.select(selectResources);
-    // this.isLoading$ = this.store.select(selectResourcesLoading).pipe(map(value => value === null ? true : value));
   }
 
   ngOnInit(): void {
@@ -110,6 +108,7 @@ export class ClientEditComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyed.next();
+    this.destroyed.complete();
     this.store.dispatch(ClientsActions.resetEditClient({}));
   }
 }

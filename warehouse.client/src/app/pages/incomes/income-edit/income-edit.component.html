@@ -1,0 +1,38 @@
+<div class="container">
+    <p class="text-start h1">Поступление</p>
+
+    <form #editForm="ngForm">
+      <div class="mb-3">
+        <label class="form-label">Номер поступления</label>
+        <input class="form-control" [(ngModel)]="model.number" [name]="'editincomenumber'" [disabled]="isLoading()" required>
+      </div>
+
+      @for (incomeItem of model.items; track incomeItem.id) {
+        <div class="row mb-3">
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" class="form-control"  placeholder="Enter email">
+          </div>
+        </div>
+      }
+
+      <div class="row mb-3">
+        <button class="btn btn-primary" [disabled]="isLoading()" (click)="onAddNewItem()">Добавить ресурс</button>
+      </div>
+
+      <div class="mb-3">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!editForm.valid || isLoading()"
+          (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
+        @if (isEditingExisting()) {
+          <button
+            type="submit"
+            class="btn btn-danger ms-2"
+            (click)="onDelete()"
+            [disabled]="isLoading()">Удалить</button>
+        }
+      </div>
+    </form>
+</div>
