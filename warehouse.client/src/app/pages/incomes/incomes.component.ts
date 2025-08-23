@@ -66,12 +66,13 @@ export class IncomesComponent implements OnInit, OnDestroy {
   }
 
   lazyLoad: (e: TableLazyLoadEvent) => void = (gridLoadEvent) => {
-    console.log(gridLoadEvent);
+    const filterParamStr = encodeURI(JSON.stringify(gridLoadEvent.filters));
+    console.log(filterParamStr);
     this.http.get<Page<Income>>(`api/incomes/all?skip=${
         gridLoadEvent.first ?? 0
       }&take=${
-        (gridLoadEvent.last ?? 10) - (gridLoadEvent.first ?? 0)
-      }&filter=${'todo'}`)
+        (gridLoadEvent.rows ?? 10)
+      }&filter=${filterParamStr}`)
       .subscribe(page => {
         this.store.dispatch(IncomesActions.loadedIncomes(page));
       });
