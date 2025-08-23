@@ -7,11 +7,45 @@
         <input class="form-control" [(ngModel)]="model.number" [name]="'editincomenumber'" [disabled]="isLoading()" required>
       </div>
 
-      @for (incomeItem of model.items; track incomeItem.id) {
+      @for (incomeItem of model.items; track incomeItem; let i = $index) {
         <div class="row mb-3">
-          <div class="form-group">
-            <label>Email address</label>
-            <input type="email" class="form-control"  placeholder="Enter email">
+          <div class="form-group col-sm-6 col-md-6 col-lg-4">
+            <label>Ресурс</label>
+            @if (isLoading()) {
+              <p>{{ incomeItem.resource }}</p>
+            } @else {
+              <select class="form-control"
+                [name]="'resourceselect' + i"
+                [(ngModel)]="incomeItem.resourceId">
+                @for (resourceOption of availableResources(); track resourceOption.id) {
+                  <option [value]="resourceOption.id">{{ resourceOption.name }}</option>
+                }
+              </select>
+            }
+          </div>
+          <div class="form-group col-sm-6 col-md-6 col-lg-4">
+            <label>Количество</label>
+            @if (isLoading()) {
+              <p>{{ incomeItem.count }}</p>
+            } @else {
+              <input type="number" class="form-control"
+                [name]="'countinput' + i"
+                [(ngModel)]="incomeItem.count">
+            }
+          </div>
+          <div class="form-group col-sm-6 col-md-6 col-lg-4">
+            <label>Единицы измерения</label>
+            @if (isLoading()) {
+              <p>{{ incomeItem.measure }}</p>
+            } @else {
+              <select class="form-control"
+                [name]="'measureselect' + i"
+                [(ngModel)]="incomeItem.measureId">
+                @for (measureOption of availableMeasures(); track measureOption.id) {
+                  <option [value]="measureOption.id">{{ measureOption.name }}</option>
+                }
+              </select>
+            }
           </div>
         </div>
       }

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -7,11 +8,13 @@ import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { IncomesActions } from '../../../state/incomes/incomes.actions';
 import { Income } from '../../../state/incomes/income';
 import { fetchActiveClients, fetchActiveMeasures, fetchActiveResources } from '../../../utils/common';
-import { selectResourcesLoading } from '../../../state/resources/resources.selector';
-import { selectMeasuresLoading } from '../../../state/measures/measures.selector';
+import { selectResources, selectResourcesLoading } from '../../../state/resources/resources.selector';
+import { selectMeasures, selectMeasuresLoading } from '../../../state/measures/measures.selector';
 import { selectClientsLoading } from '../../../state/clients/clients.selector';
 import { selectIncomeToEdit } from '../../../state/incomes/incomes.selector';
 import { dateToDateOnly } from '../../../utils/utils';
+import { Resource } from '../../../state/resources/resource';
+import { Measure } from '../../../state/measures/measure';
 
 @Component({
   selector: 'app-income-edit',
@@ -29,6 +32,8 @@ export class IncomeEditComponent implements OnInit, OnDestroy {
 
   isLoading: WritableSignal<boolean> = signal(true);
   isEditingExisting: WritableSignal<boolean> = signal(false);
+  availableResources: Signal<ReadonlyArray<Resource> | undefined>;
+  availableMeasures: Signal<ReadonlyArray<Measure> | undefined>;
   model: Income = { id: 0, date: dateToDateOnly(new Date()), items: [], number: '', };
   private original?: Income;
 
@@ -36,6 +41,9 @@ export class IncomeEditComponent implements OnInit, OnDestroy {
     this.http = inject(HttpClient);
     this.store = inject(Store);
     this.router = inject(Router);
+
+    this.availableResources = toSignal(this.store.select(selectResources));
+    this.availableMeasures = toSignal(this.store.select(selectMeasures));
   }
 
   ngOnInit(): void {
