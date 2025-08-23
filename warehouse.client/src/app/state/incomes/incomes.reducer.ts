@@ -17,6 +17,7 @@ export const initialState: IncomesState = {
   count: 0,
   isLoading: null,
   gridPageParams: undefined,
+  editingIncome: undefined,
 };
 
 export const incomesReducer = createReducer(
@@ -58,7 +59,7 @@ export const incomesReducer = createReducer(
     count,
     isLoading: false,
   }; }),
-  on(IncomesActions.unloadIncomes, (_state, action) => initialState),
+  on(IncomesActions.unloadIncomes, (_state, action) => { return { ...initialState, editingIncome: _state.editingIncome }; }),
   on(IncomesActions.editIncome, (_state, { item }) => { return { ..._state, editingIncome: item }; }),
   on(IncomesActions.resetEditIncome, (_state, { optional }) => { return { ..._state, editingIncome: undefined }; })
 );
