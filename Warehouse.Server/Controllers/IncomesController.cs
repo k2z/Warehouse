@@ -81,11 +81,13 @@ namespace Warehouse.Server.Controllers
       {
         Number = newIncome.Number,
         Date = newIncome.Date ?? DateOnly.FromDateTime(DateTime.Now),
-        IncomeResources = newIncome.Items.Select(irdto => new Model.Entities.IncomeResource
+        IncomeResources = newIncome.Items.Select(ir => new Model.Entities.IncomeResource
         {
-          Count = irdto.Count!.Value,
-          MeasureId = irdto.MeasureId!.Value,
-          ResourceId = irdto.ResourceId!.Value,
+          Count = ir.Count!.Value,
+          MeasureId = ir.MeasureId!.Value,
+          Measure = db.Measures.Single(m => m.Id == ir.MeasureId!.Value),
+          ResourceId = ir.ResourceId!.Value,
+          Resource = db.Resources.Single(r => r.Id == ir.ResourceId!.Value),
         }).ToList()
       };
       await this.db.Incomes.AddAsync(newIncomeEntity);
