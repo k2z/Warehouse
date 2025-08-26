@@ -9,6 +9,16 @@ export const selectIncomes = createSelector(
   (state: IncomesState) => state.items
 );
 
+export const selectIncomesLoadingNumbers = createSelector(
+  selectFeature,
+  (state: IncomesState) => state.isLoadingNumbers
+);
+
+export const selectIncomesNumbers = createSelector(
+  selectFeature,
+  (state: IncomesState) => state.numbers
+);
+
 export const selectIncomesCount = createSelector(
   selectFeature,
   (state: IncomesState) => state.count

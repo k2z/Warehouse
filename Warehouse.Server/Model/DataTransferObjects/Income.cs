@@ -24,17 +24,14 @@ namespace Warehouse.Server.Model.DataTransferObjects
         Id = source.Id,
         Number = source.Number,
         Date = source.Date,
-        Items = source.IncomeResources.Select((ir) =>
+        Items = source.IncomeResources.Select((ir) => new IncomeResource
         {
-          return new IncomeResource
-          {
-            Id = ir.Id,
-            Count = ir.Count,
-            Measure = ir.Measure.Name,
-            MeasureId = ir.MeasureId,
-            Resource = ir.Resource.Name,
-            ResourceId = ir.ResourceId
-          };
+          Id = ir.Id,
+          Count = ir.Count,
+          Measure = ir.Measure.Name,
+          MeasureId = ir.MeasureId,
+          Resource = ir.Resource.Name,
+          ResourceId = ir.ResourceId
         }).ToList()
       };
       return result;

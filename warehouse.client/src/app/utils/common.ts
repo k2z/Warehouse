@@ -10,6 +10,8 @@ import { selectClientsLoading } from "../state/clients/clients.selector";
 import { ClientsActions } from "../state/clients/clients.actions";
 import { Client } from "../state/clients/client";
 import { selectMeasuresLoading } from "../state/measures/measures.selector";
+import {selectIncomesLoadingNumbers} from "../state/incomes/incomes.selector";
+import {IncomesActions} from "../state/incomes/incomes.actions";
 
 export function fetchActiveResources(store: Store, http: HttpClient) {
   store.select(selectResourcesLoading).pipe(
@@ -84,4 +86,26 @@ export function fetchActiveClients(store: Store, http: HttpClient) {
         //console.log('Measures loading complete');
       }
     });
+}
+
+export function fetchIncomeNumbers(store: Store, http: HttpClient) {
+  store.select(selectIncomesLoadingNumbers).pipe(
+    takeWhile(isLoading => isLoading === null),
+    tap((val) => {
+      setTimeout(() => { store.dispatch(IncomesActions.loadingIncomeNumbers({})); });
+    }),
+    mergeMap((val) => {
+      return http.get<Array<string>>('api/incomes/allnumbers');
+    }),
+  ).subscribe({
+    next: (value) => {
+      store.dispatch(IncomesActions.loadedIncomeNumbers({ items: value }));
+    },
+    error: (err) => {
+      console.error(err);
+    },
+    complete: () => {
+      //
+    }
+  })
 }

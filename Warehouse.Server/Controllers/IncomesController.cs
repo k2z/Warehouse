@@ -7,28 +7,28 @@ namespace Warehouse.Server.Controllers
 {
   [ApiController]
   [Route("api/incomes")]
-  public class IncomesController : ControllerBase
+  public class IncomesController(
+    DatabaseContext context,
+    ILogger<IncomesController> logger)
+    : ControllerBase
   {
 
-    private readonly ILogger<IncomesController> _logger;
-    private readonly DatabaseContext db;
+    private readonly ILogger<IncomesController> _logger = logger;
 
-    public IncomesController(
-      DatabaseContext context,
-      ILogger<IncomesController> logger
-      )
+    [HttpGet("allnumbers")]
+    public async Task<ActionResult<IEnumerable<string>>> ListFilteringOptions()
     {
-      this.db = context;
-      _logger = logger;
+      var result = await context.Incomes.Select((i) => i.Number).ToListAsync();
+      return Ok(result);
     }
-
+    
     [HttpGet("all")]
     public async Task<ActionResult<Model.DataTransferObjects.Page<Model.DataTransferObjects.Income>>> ListIncomes(
       [FromQuery(Name = "filter")] GridFilter? filter,
       [FromQuery(Name = "skip")] int? skip,
       [FromQuery(Name = "take")] int? take)
     {
-      var itemsQuery = db.Incomes
+      var itemsQuery = context.Incomes
         .Select(i => new Model.DataTransferObjects.Income
         {
           Id = i.Id,
@@ -59,7 +59,7 @@ namespace Warehouse.Server.Controllers
       var result = new Model.DataTransferObjects.Page<Model.DataTransferObjects.Income>
       {
         Items = await itemsQuery.ToListAsync(),
-        Count = await db.Incomes.CountAsync(),
+        Count = await context.Incomes.CountAsync(),
       };
       return Ok(result);
     }
@@ -85,14 +85,14 @@ namespace Warehouse.Server.Controllers
         {
           Count = ir.Count!.Value,
           MeasureId = ir.MeasureId!.Value,
-          Measure = db.Measures.Single(m => m.Id == ir.MeasureId!.Value),
+          Measure = context.Measures.Single(m => m.Id == ir.MeasureId!.Value),
           ResourceId = ir.ResourceId!.Value,
-          Resource = db.Resources.Single(r => r.Id == ir.ResourceId!.Value),
+          Resource = context.Resources.Single(r => r.Id == ir.ResourceId!.Value),
         }).ToList()
       };
-      await this.db.Incomes.AddAsync(newIncomeEntity);
-      await this.db.SaveChangesAsync();
-      var result = await this.db.Incomes.SingleAsync(i => i.Number == newIncome.Number);
+      await context.Incomes.AddAsync(newIncomeEntity);
+      await context.SaveChangesAsync();
+      var result = await context.Incomes.SingleAsync(i => i.Number == newIncome.Number);
       return Model.DataTransferObjects.Income.FromEntity(result);
     }
 

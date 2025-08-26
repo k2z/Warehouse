@@ -10,6 +10,8 @@ export type IncomesState = {
   isLoading: boolean | null;
   gridPageParams?: GridPageParams;
   editingIncome?: Income;
+  numbers: ReadonlyArray<string>;
+  isLoadingNumbers: boolean | null;
 };
 
 export const initialState: IncomesState = {
@@ -18,6 +20,8 @@ export const initialState: IncomesState = {
   isLoading: null,
   gridPageParams: undefined,
   editingIncome: undefined,
+  numbers: [],
+  isLoadingNumbers: null,
 };
 
 export const incomesReducer = createReducer(
@@ -61,5 +65,9 @@ export const incomesReducer = createReducer(
   }; }),
   on(IncomesActions.unloadIncomes, (_state, action) => { return { ...initialState, editingIncome: _state.editingIncome }; }),
   on(IncomesActions.editIncome, (_state, { item }) => { return { ..._state, editingIncome: item }; }),
-  on(IncomesActions.resetEditIncome, (_state, { optional }) => { return { ..._state, editingIncome: undefined }; })
+  on(IncomesActions.resetEditIncome, (_state, { optional }) => { return { ..._state, editingIncome: undefined }; }),
+  on(IncomesActions.loadingIncomeNumbers, (_state, { optional }) => { return { ..._state, isLoadingNumbers: true } }),
+  on(IncomesActions.loadedIncomeNumbers, (_state, { items }) => {
+    return { ..._state, numbers: items, isLoadingNumbers: false };
+  })
 );
