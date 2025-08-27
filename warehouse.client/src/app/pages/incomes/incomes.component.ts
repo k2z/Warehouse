@@ -109,9 +109,12 @@ export class IncomesComponent implements OnInit, OnDestroy {
     urlParams.push(`skip=${gridLoadEvent.first ?? 0}`);
     urlParams.push(`take=${gridLoadEvent.rows ?? 10}`);
     if (gridLoadEvent.filters) {
-      urlParams.push(`filter=${
-        encodeURI(JSON.stringify(gridFilterToBeFilter(gridLoadEvent.filters)))
-      }`);
+      const filterData = gridFilterToBeFilter(gridLoadEvent.filters);
+      if (filterData.length > 0) {
+        urlParams.push(`filter=${
+          encodeURI(JSON.stringify(filterData))
+        }`);
+      }
     }
     this.http.get<Page<Income>>(`api/incomes/all?${urlParams.join('&')}`)
       .subscribe(page => {

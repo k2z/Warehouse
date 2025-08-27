@@ -30,11 +30,11 @@ export type Page<TItem> = {
 };
 
 export enum BeFilterMathcType {
-  EQUALS,
-  IN,
-  MORETHAN,
-  LESSTHAN,
-  NOTEQUAL,
+  EQUALS = 0,
+  IN = 1,
+  MORETHAN = 2,
+  LESSTHAN = 3,
+  NOTEQUAL = 4,
 }
 
 export type BeFilterMetadata = {
@@ -43,8 +43,6 @@ export type BeFilterMetadata = {
   value?: string;
   dateValue?: Date;
   values?: Array<string>;
-  dateFrom?: Date;
-  dateTo?: Date;
 }
 
 export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilterMetadata> {
@@ -75,12 +73,14 @@ export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilter
     } else if (fieldFilter && fieldFilter.matchMode && fieldFilter.value !== null) {
       console.log('item', fieldFilter);
       switch (fieldFilter.matchMode) {
-        case 'in': 
-          result.push({ field: filteredField, matchType: BeFilterMathcType.IN, values: fieldFilter.value });
+        case 'in':
+          if (Array.isArray(fieldFilter.value) && fieldFilter.value.length > 0) {
+            result.push({ field: filteredField, matchType: BeFilterMathcType.IN, values: fieldFilter.value });
+          }
           break;
         default:
           if (fieldFilter.matchMode) {
-            console.log(`matchMode [${fieldFilter.matchMode}] not supported`, fieldFilter);
+            console.error(`matchMode [${fieldFilter.matchMode}] not supported`, fieldFilter);
           }
       }
     }
