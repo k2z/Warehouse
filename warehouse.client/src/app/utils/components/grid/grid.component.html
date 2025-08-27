@@ -52,6 +52,18 @@
               </p-columnFilter>
             </th>
           }
+          @case(FilteringType.DATERANGE) {
+            <th style="min-width:10rem">
+                <div class="flex items-center justify-between">
+                    Дата
+                    <p-columnFilter
+                      type="date"
+                      [field]="columnData.field"
+                      display="menu">
+                    </p-columnFilter>
+                </div>
+            </th>
+          }
           @case(FilteringType.RESOURCESTATUS || FilteringType.MEASURESTATUS || FilteringType.CLIENTSTATUS) {
             <th>
               <p-columnFilter field="status" matchMode="equals" [showMenu]="false">
@@ -89,6 +101,9 @@
           @case(ColumnType.TEXT) {
             <td>{{ item[columnData.field] }}</td>
           }
+          @case(ColumnType.DATEONLY) {
+            <td>{{ item[columnData.field] | dateOnly }}</td>
+          }
           @case(ColumnType.RESOURCESTATUS) {
             <td>
               <p-tag
@@ -109,6 +124,12 @@
                 [value]="item[columnData.field] | clientStatus"
                 [severity]="statusToPrimengSeverity(item[columnData.field])" />
             </td>
+          }
+          @case(ColumnType.RESOURCES) {
+            <td>{{ item[columnData.field].join(', ') || '-' }}</td>
+          }
+          @case(ColumnType.MEASURES) {
+            <td>{{ item[columnData.field].join(', ') || '-' }}</td>
           }
           @default {
             <td><span>TODO</span></td>

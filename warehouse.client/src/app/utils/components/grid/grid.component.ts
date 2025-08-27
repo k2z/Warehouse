@@ -9,12 +9,16 @@ import { ResourceStatus } from '../../../state/resources/resource';
 import { ResourceStatusPipe } from '../../pipes/resource-status.pipe';
 import { MeasureStatusPipe } from '../../pipes/measure-status.pipe';
 import { ClientStatusPipe } from '../../pipes/client-status.pipe';
+import { DateOnlyPipe } from '../../pipes/date-only.pipe';
 
 export enum ColumnType {
   TEXT,
   RESOURCESTATUS,
   MEASURESTATUS,
   CLIENTSTATUS,
+  DATEONLY,
+  RESOURCES,
+  MEASURES,
 }
 
 export enum FilteringType {
@@ -53,6 +57,7 @@ export type Column = {
     ResourceStatusPipe,
     MeasureStatusPipe,
     ClientStatusPipe,
+    DateOnlyPipe,
   ],
 })
 export class GridComponent {
