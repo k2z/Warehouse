@@ -17,7 +17,7 @@ import { selectResources, selectResourcesLoading } from '../../state/resources/r
 import { selectMeasures, selectMeasuresLoading } from '../../state/measures/measures.selector';
 import { selectClientsLoading } from '../../state/clients/clients.selector';
 import { TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
-import { Page } from '../../utils/utils';
+import { gridFilterToBeFilter, Page } from '../../utils/utils';
 import { IncomesActions } from '../../state/incomes/incomes.actions';
 
 export type IncomeDisplayItem = Income & {
@@ -105,13 +105,15 @@ export class IncomesComponent implements OnInit, OnDestroy {
   }
 
   lazyLoad: (e: TableLazyLoadEvent) => void = (gridLoadEvent) => {
-    const filterParamStr = encodeURI(JSON.stringify(gridLoadEvent.filters));
-    console.log(filterParamStr);
-    this.http.get<Page<Income>>(`api/incomes/all?skip=${
-        gridLoadEvent.first ?? 0
-      }&take=${
-        (gridLoadEvent.rows ?? 10)
-      }&filter=${filterParamStr}`)
+    const urlParams: string[] = [];
+    urlParams.push(`skip=${gridLoadEvent.first ?? 0}`);
+    urlParams.push(`take=${gridLoadEvent.rows ?? 10}`);
+    if (gridLoadEvent.filters) {
+      urlParams.push(`filter=${
+        encodeURI(JSON.stringify(gridFilterToBeFilter(gridLoadEvent.filters)))
+      }`);
+    }
+    this.http.get<Page<Income>>(`api/incomes/all?${urlParams.join('&')}`)
       .subscribe(page => {
         this.store.dispatch(IncomesActions.loadedIncomes(page));
       });
