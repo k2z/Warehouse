@@ -53,23 +53,23 @@ export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilter
     const fieldFilter = primengFilter[filteredField];
     if (Array.isArray(fieldFilter)) {
       for(let filterClause of fieldFilter) {
-        switch (filterClause.matchMode) {
-          case 'dateIs':
-            result.push({ field: filteredField, matchType: BeFilterMathcType.EQUALS, dateValue: filterClause.value });
-            break;
-          case 'dateAfter':
-            result.push({ field: filteredField, matchType: BeFilterMathcType.MORETHAN, dateValue: filterClause.value });
-            break;
-          case 'dateBefore':
-            result.push({ field: filteredField, matchType: BeFilterMathcType.LESSTHAN, dateValue: filterClause.value });
-            break;
-          case 'dateIsNot':
-            result.push({ field: filteredField, matchType: BeFilterMathcType.NOTEQUAL, dateValue: filterClause.value });
-            break;
-          default:
-            if (filterClause.matchMode) {
+        if (filterClause.matchMode && filterClause.value !== null) {
+          switch (filterClause.matchMode) {
+            case 'dateIs':
+              result.push({ field: filteredField, matchType: BeFilterMathcType.EQUALS, dateValue: filterClause.value });
+              break;
+            case 'dateAfter':
+              result.push({ field: filteredField, matchType: BeFilterMathcType.MORETHAN, dateValue: filterClause.value });
+              break;
+            case 'dateBefore':
+              result.push({ field: filteredField, matchType: BeFilterMathcType.LESSTHAN, dateValue: filterClause.value });
+              break;
+            case 'dateIsNot':
+              result.push({ field: filteredField, matchType: BeFilterMathcType.NOTEQUAL, dateValue: filterClause.value });
+              break;
+            default:
               console.error(`not supported filter type ${filterClause.matchMode}`, filterClause);
-            }
+          }
         }
       }
     } else if (fieldFilter && fieldFilter.matchMode && fieldFilter.value !== null) {
