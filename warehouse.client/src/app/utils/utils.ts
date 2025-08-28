@@ -43,6 +43,7 @@ export type BeFilterMetadata = {
   value?: string;
   dateValue?: Date;
   values?: Array<string>;
+  numberValues?: Array<number>;
 }
 
 export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilterMetadata> {
@@ -75,7 +76,11 @@ export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilter
       switch (fieldFilter.matchMode) {
         case 'in':
           if (Array.isArray(fieldFilter.value) && fieldFilter.value.length > 0) {
-            result.push({ field: filteredField, matchType: BeFilterMathcType.IN, values: fieldFilter.value });
+            if (typeof fieldFilter.value[0] === "number") {
+              result.push({ field: filteredField, matchType: BeFilterMathcType.IN, numberValues: fieldFilter.value });
+            } else {
+              result.push({ field: filteredField, matchType: BeFilterMathcType.IN, values: fieldFilter.value });
+            }
           }
           break;
         default:

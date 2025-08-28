@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Warehouse.Server.Model;
+using Warehouse.Server.Model.Entities;
 using Warehouse.Server.Utils;
 
 namespace Warehouse.Server.Controllers
@@ -28,25 +29,27 @@ namespace Warehouse.Server.Controllers
       [FromQuery(Name = "skip")] int? skip,
       [FromQuery(Name = "take")] int? take)
     {
-      var itemsQuery = context.Incomes
-        .Select(i => new Model.DataTransferObjects.Income
-        {
-          Id = i.Id,
-          Number = i.Number,
-          Date = i.Date,
-          Items = i.IncomeResources.Select((ir) => new Model.DataTransferObjects.IncomeResource()
-          {
-            Id = ir.Id,
-            Count = ir.Count,
-            Resource = ir.Resource.Name,
-            ResourceId = ir.ResourceId,
-            Measure = ir.Measure.Name,
-            MeasureId = ir.MeasureId,
-          }).ToList()
-        });
+      var itemsQuery = context.Incomes.AsQueryable();
       if (filter != null)
       {
-        // TODO support filtering
+        var includingResourcesFilter = filter.SingleOrDefault(f => f.Field == "includingResources");
+        if (includingResourcesFilter != null && includingResourcesFilter.NumberValues != null)
+        {
+          itemsQuery = itemsQuery.Where(item =>
+            item.IncomeResources.Any(ir => includingResourcesFilter.NumberValues.Contains(ir.ResourceId)));
+        }
+        var includingMeasuresFilter = filter.SingleOrDefault(f => f.Field == "includingMeasures");
+        if (includingMeasuresFilter != null && includingMeasuresFilter.NumberValues != null)
+        {
+          itemsQuery = itemsQuery.Where(item =>
+            item.IncomeResources.Any(ir => includingMeasuresFilter.NumberValues.Contains(ir.MeasureId)));
+        }
+        var otherFilters = filter.Where(f => f.Field != "includingMeasures" && f.Field != "includingResources").ToArray();
+        if (otherFilters.Any())
+        {
+          var expr = Warehouse.Server.Utils.Utils.ParseFilterExpression<Income>(otherFilters);
+          itemsQuery = itemsQuery.Where(expr);
+        }
       }
       if (skip.HasValue)
       {
@@ -56,9 +59,25 @@ namespace Warehouse.Server.Controllers
       {
         itemsQuery = itemsQuery.Take(take.Value);
       }
+
+      var resultItems = itemsQuery.Select(i => new Model.DataTransferObjects.Income
+      {
+        Id = i.Id,
+        Number = i.Number,
+        Date = i.Date,
+        Items = i.IncomeResources.Select((ir) => new Model.DataTransferObjects.IncomeResource()
+        {
+          Id = ir.Id,
+          Count = ir.Count,
+          Resource = ir.Resource.Name,
+          ResourceId = ir.ResourceId,
+          Measure = ir.Measure.Name,
+          MeasureId = ir.MeasureId,
+        }).ToList()
+      });
       var result = new Model.DataTransferObjects.Page<Model.DataTransferObjects.Income>
       {
-        Items = await itemsQuery.ToListAsync(),
+        Items = await resultItems.ToListAsync(),
         Count = await context.Incomes.CountAsync(),
       };
       return Ok(result);

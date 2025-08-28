@@ -26,6 +26,9 @@ namespace Warehouse.Server.Utils
 
     [JsonPropertyName("values")]
     public IEnumerable<string>? Values { get; set; }
+    
+    [JsonPropertyName("numberValues")]
+    public IEnumerable<int>? NumberValues { get; set; }
 
     [JsonPropertyName("dateValue")]
     public DateTime? DateValue { get; set; }
