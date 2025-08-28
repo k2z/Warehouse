@@ -110,9 +110,9 @@ export class IncomesComponent implements OnInit, OnDestroy {
     urlParams.push(`take=${gridLoadEvent.rows ?? 10}`);
     if (gridLoadEvent.filters) {
       const filterData = gridFilterToBeFilter(gridLoadEvent.filters);
-      if (filterData.length > 0) {
+      for (let filterDataItem of filterData) {
         urlParams.push(`filter=${
-          encodeURI(JSON.stringify(filterData))
+          encodeURI(JSON.stringify(filterDataItem))
         }`);
       }
     }

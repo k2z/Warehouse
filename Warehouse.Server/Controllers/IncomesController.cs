@@ -24,7 +24,7 @@ namespace Warehouse.Server.Controllers
     
     [HttpGet("all")]
     public async Task<ActionResult<Model.DataTransferObjects.Page<Model.DataTransferObjects.Income>>> ListIncomes(
-      [FromQuery(Name = "filter")] string? filter,
+      [FromQuery(Name = "filter")] IEnumerable<FilteringData>? filter,
       [FromQuery(Name = "skip")] int? skip,
       [FromQuery(Name = "take")] int? take)
     {
