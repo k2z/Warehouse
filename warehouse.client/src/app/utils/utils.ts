@@ -11,7 +11,7 @@ export function buildId(length: number = 5): string {
 }
 
 export function dateToDateOnly(source: Date): string {
-  return source.toISOString().slice(0, 10);
+  return source.toLocaleString('sv').slice(0, 10);
 }
 
 export type GridFilters = {
@@ -54,7 +54,7 @@ export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilter
       for(let filterClause of fieldFilter) {
         if (filterClause.matchMode && filterClause.value !== null) {
           const dateValue = filterClause.value as Date;
-          const dateOnlyStr = dateValue.toISOString().substring(0, 10);
+          const dateOnlyStr = dateToDateOnly(dateValue);
           switch (filterClause.matchMode) {
             case 'dateIs':
               result.push({ field: filteredField, matchType: BeFilterMathcType.EQUALS, dateValue: dateOnlyStr });
