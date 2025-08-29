@@ -19,6 +19,8 @@ import { clientsReducer } from "./state/clients/clients.reducer";
 import { ClientEditComponent } from "./pages/clients/client-edit/client-edit.component";
 import { incomesReducer } from "./state/incomes/incomes.reducer";
 import { IncomeEditComponent } from "./pages/incomes/income-edit/income-edit.component";
+import { shipmentsReducer } from "./state/shipments/shipment.reducer";
+import { ShipmentEditComponent } from "./pages/shipments/shipment-edit/shipment-edit.component";
 
 const routes: Routes = [
   {
@@ -36,6 +38,10 @@ const routes: Routes = [
   {
     path: 'shipments',
     component: ShipmentsComponent,
+  },
+  {
+    path: 'shipments/edit',
+    component: ShipmentEditComponent,
   },
   {
     path: 'resources',
@@ -76,6 +82,7 @@ export const appConfig: ApplicationConfig = {
       measures: measuresReducer,
       clients: clientsReducer,
       incomes: incomesReducer,
+      shipments: shipmentsReducer,
       /* TODO */
     }),
     provideAnimationsAsync(),
