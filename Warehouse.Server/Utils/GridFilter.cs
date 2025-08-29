@@ -31,7 +31,7 @@ namespace Warehouse.Server.Utils
     public IEnumerable<int>? NumberValues { get; set; }
 
     [JsonPropertyName("dateValue")]
-    public DateTime? DateValue { get; set; }
+    public DateOnly? DateValue { get; set; }
 
     public static bool TryParse(string value, out FilteringData result)
     {

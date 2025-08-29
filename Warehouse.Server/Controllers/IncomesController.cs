@@ -30,7 +30,7 @@ namespace Warehouse.Server.Controllers
       [FromQuery(Name = "take")] int? take)
     {
       var itemsQuery = context.Incomes.AsQueryable();
-      if (filter != null)
+      if (filter != null && filter.Any())
       {
         var includingResourcesFilter = filter.SingleOrDefault(f => f.Field == "includingResources");
         if (includingResourcesFilter != null && includingResourcesFilter.NumberValues != null)

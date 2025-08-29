@@ -59,9 +59,8 @@ namespace Warehouse.Server.Utils
                 var constant = propertyType switch
                 {
                   _ when propertyType == typeof(string) => Expression.Constant(filter.Value),
-                  _ when propertyType == typeof(DateTime) => Expression.Constant(filter.DateValue.HasValue
-                    ? DateOnly.FromDateTime(filter.DateValue.Value)
-                    : null),
+                  _ when propertyType == typeof(DateOnly) => Expression.Constant(filter.DateValue),
+                  
                   _ => throw new ArgumentOutOfRangeException()
                 };
                 var expression = Expression.Equal(member, constant);
@@ -80,27 +79,21 @@ namespace Warehouse.Server.Utils
               }
               case FilteringType.LessThan:
               {
-                var constant = Expression.Constant(filter.DateValue.HasValue
-                  ? DateOnly.FromDateTime(filter.DateValue.Value)
-                  : null);
+                var constant = Expression.Constant(filter.DateValue);
                 var expression = Expression.LessThan(member, constant);
                 expressionBody = expressionBody == null ? expression : Expression.AndAlso(expressionBody, expression);
                 break;
               }
               case FilteringType.MoreThan:
               {
-                var constant = Expression.Constant(filter.DateValue.HasValue
-                  ? DateOnly.FromDateTime(filter.DateValue.Value)
-                  : null);
+                var constant = Expression.Constant(filter.DateValue);
                 var expression = Expression.LessThan(constant, member);
                 expressionBody = expressionBody == null ? expression : Expression.AndAlso(expressionBody, expression);
                 break;
               }
               case FilteringType.NotEqual:
               {
-                var constant = Expression.Constant(filter.DateValue.HasValue
-                  ? DateOnly.FromDateTime(filter.DateValue.Value)
-                  : null);
+                var constant = Expression.Constant(filter.DateValue);
                 var expression = Expression.NotEqual(constant, member);
                 expressionBody = expressionBody == null ? expression : Expression.AndAlso(expressionBody, expression);
                 break;

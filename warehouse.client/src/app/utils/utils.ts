@@ -41,7 +41,7 @@ export type BeFilterMetadata = {
   field: string;
   matchType: BeFilterMathcType;
   value?: string;
-  dateValue?: Date;
+  dateValue?: string;// DateOnly 'YYYY-MM-DD'
   values?: Array<string>;
   numberValues?: Array<number>;
 }
@@ -53,18 +53,20 @@ export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilter
     if (Array.isArray(fieldFilter)) {
       for(let filterClause of fieldFilter) {
         if (filterClause.matchMode && filterClause.value !== null) {
+          const dateValue = filterClause.value as Date;
+          const dateOnlyStr = dateValue.toISOString().substring(0, 10);
           switch (filterClause.matchMode) {
             case 'dateIs':
-              result.push({ field: filteredField, matchType: BeFilterMathcType.EQUALS, dateValue: filterClause.value });
+              result.push({ field: filteredField, matchType: BeFilterMathcType.EQUALS, dateValue: dateOnlyStr });
               break;
             case 'dateAfter':
-              result.push({ field: filteredField, matchType: BeFilterMathcType.MORETHAN, dateValue: filterClause.value });
+              result.push({ field: filteredField, matchType: BeFilterMathcType.MORETHAN, dateValue: dateOnlyStr });
               break;
             case 'dateBefore':
-              result.push({ field: filteredField, matchType: BeFilterMathcType.LESSTHAN, dateValue: filterClause.value });
+              result.push({ field: filteredField, matchType: BeFilterMathcType.LESSTHAN, dateValue: dateOnlyStr });
               break;
             case 'dateIsNot':
-              result.push({ field: filteredField, matchType: BeFilterMathcType.NOTEQUAL, dateValue: filterClause.value });
+              result.push({ field: filteredField, matchType: BeFilterMathcType.NOTEQUAL, dateValue: dateOnlyStr });
               break;
             default:
               console.error(`not supported filter type ${filterClause.matchMode}`, filterClause);
