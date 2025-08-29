@@ -4,32 +4,32 @@ import { ShipmentsState } from "./shipment.reducer";
 
 export const selectFeature = createFeatureSelector<ShipmentsState>('shipments');
 
-export const selectIncomes = createSelector(
+export const selectShipments = createSelector(
   selectFeature,
   (state: ShipmentsState) => state.items
 );
 
-export const selectIncomesLoadingNumbers = createSelector(
+export const selectShipmentsLoadingNumbers = createSelector(
   selectFeature,
   (state: ShipmentsState) => state.isLoadingNumbers
 );
 
-export const selectIncomesNumbers = createSelector(
+export const selectShipmentsNumbers = createSelector(
   selectFeature,
   (state: ShipmentsState) => state.numbers
 );
 
-export const selectIncomesCount = createSelector(
+export const selectShipmentsCount = createSelector(
   selectFeature,
   (state: ShipmentsState) => state.count
 );
 
-export const selectIncomesLoading = createSelector(
+export const selectShipmentsLoading = createSelector(
   selectFeature,
   (state: ShipmentsState) => state.isLoading
 );
 
-export const selectIncomeToEdit = createSelector(
+export const selectShipmentToEdit = createSelector(
   selectFeature,
-  (state: ShipmentsState) => state.editingIncome
+  (state: ShipmentsState) => state.editingShipment
 );

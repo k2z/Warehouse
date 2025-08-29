@@ -9,7 +9,7 @@ export type ShipmentsState = {
   count: number;
   isLoading: boolean | null;
   gridPageParams?: GridPageParams;
-  editingIncome?: Shipment;
+  editingShipment?: Shipment;
   numbers: ReadonlyArray<string>;
   isLoadingNumbers: boolean | null;
 };
@@ -19,7 +19,7 @@ export const initialState: ShipmentsState = {
   count: 0,
   isLoading: null,
   gridPageParams: undefined,
-  editingIncome: undefined,
+  editingShipment: undefined,
   numbers: [],
   isLoadingNumbers: null,
 };
@@ -63,9 +63,9 @@ export const shipmentsReducer = createReducer(
     count,
     isLoading: false,
   }; }),
-  on(ShipmentsActions.unloadShipments, (_state, action) => { return { ...initialState, editingIncome: _state.editingIncome }; }),
-  on(ShipmentsActions.editShipment, (_state, { item }) => { return { ..._state, editingIncome: item }; }),
-  on(ShipmentsActions.resetEditShipment, (_state, { optional }) => { return { ..._state, editingIncome: undefined }; }),
+  on(ShipmentsActions.unloadShipments, (_state, action) => { return { ...initialState, editingShipment: _state.editingShipment }; }),
+  on(ShipmentsActions.editShipment, (_state, { item }) => { return { ..._state, editingShipment: item }; }),
+  on(ShipmentsActions.resetEditShipment, (_state, { optional }) => { return { ..._state, editingShipment: undefined }; }),
   on(ShipmentsActions.loadingShipmentNumbers, (_state, { optional }) => { return { ..._state, isLoadingNumbers: true } }),
   on(ShipmentsActions.loadedShipmentNumbers, (_state, { items }) => {
     return { ..._state, numbers: items, isLoadingNumbers: false };

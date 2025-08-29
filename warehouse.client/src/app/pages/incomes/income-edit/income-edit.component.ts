@@ -7,10 +7,9 @@ import { Store } from '@ngrx/store';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { IncomesActions } from '../../../state/incomes/incomes.actions';
 import { Income } from '../../../state/incomes/income';
-import { fetchActiveClients, fetchActiveMeasures, fetchActiveResources } from '../../../utils/common';
+import { fetchActiveMeasures, fetchActiveResources } from '../../../utils/common';
 import { selectResources, selectResourcesLoading } from '../../../state/resources/resources.selector';
 import { selectMeasures, selectMeasuresLoading } from '../../../state/measures/measures.selector';
-import { selectClientsLoading } from '../../../state/clients/clients.selector';
 import { selectIncomeToEdit } from '../../../state/incomes/incomes.selector';
 import { dateToDateOnly } from '../../../utils/utils';
 import { Resource } from '../../../state/resources/resource';
@@ -47,7 +46,6 @@ export class IncomeEditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    fetchActiveClients(this.store, this.http);
     fetchActiveResources(this.store, this.http);
     fetchActiveMeasures(this.store, this.http);
 
@@ -70,12 +68,10 @@ export class IncomeEditComponent implements OnInit, OnDestroy {
       [
         this.store.select(selectResourcesLoading),
         this.store.select(selectMeasuresLoading),
-        this.store.select(selectClientsLoading),
       ],
-      (loadingResources, loadingMeasures, loadingClients) => {
+      (loadingResources, loadingMeasures) => {
         return (loadingResources ?? true) ||
-          (loadingMeasures ?? true) ||
-          (loadingClients ?? true);
+          (loadingMeasures ?? true);
       }
     ).pipe(
       takeUntil(this.destroyed.asObservable())

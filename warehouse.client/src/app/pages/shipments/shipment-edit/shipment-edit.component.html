@@ -1,1 +1,90 @@
-<p>shipment-edit works!</p>
+<div class="container">
+    <p class="text-start h1">Отгрузка</p>
+
+    <form #editForm="ngForm">
+      <div class="row mb-3">
+        <div class="form-group col-sm-6 col-md-6 col-lg-4">
+          <label class="form-label">Клиент</label>
+          @if (isLoading()) {
+            <p>{{ model.client }}</p>
+          } @else {
+            <select class="form-control"
+              [name]="'shipmentclientselect'"
+              [(ngModel)]="model.clientId">
+              @for (clientOption of availableClients(); track clientOption.id) {
+                <option [value]="clientOption.id">{{ clientOption.name }}</option>
+              }
+            </select>
+          }
+        </div>
+
+        <div class="form-group col-sm-6 col-md-6 col-lg-4">
+          <label class="form-label">Номер отгрузки</label>
+          <input class="form-control" [(ngModel)]="model.number" [name]="'editshipmentnumber'" [disabled]="isLoading()" required>
+        </div>
+      </div>
+      
+
+      @for (shipmentItem of model.items; track shipmentItem; let i = $index) {
+        <div class="row mb-3">
+          <div class="form-group col-sm-6 col-md-6 col-lg-4">
+            <label>Ресурс</label>
+            @if (isLoading()) {
+              <p>{{ shipmentItem.resource }}</p>
+            } @else {
+              <select class="form-control"
+                [name]="'resourceselect' + i"
+                [(ngModel)]="shipmentItem.resourceId">
+                @for (resourceOption of availableResources(); track resourceOption.id) {
+                  <option [value]="resourceOption.id">{{ resourceOption.name }}</option>
+                }
+              </select>
+            }
+          </div>
+          <div class="form-group col-sm-6 col-md-6 col-lg-4">
+            <label>Количество</label>
+            @if (isLoading()) {
+              <p>{{ shipmentItem.count }}</p>
+            } @else {
+              <input type="number" class="form-control"
+                [name]="'countinput' + i"
+                [(ngModel)]="shipmentItem.count">
+            }
+          </div>
+          <div class="form-group col-sm-6 col-md-6 col-lg-4">
+            <label>Единицы измерения</label>
+            @if (isLoading()) {
+              <p>{{ shipmentItem.measure }}</p>
+            } @else {
+              <select class="form-control"
+                [name]="'measureselect' + i"
+                [(ngModel)]="shipmentItem.measureId">
+                @for (measureOption of availableMeasures(); track measureOption.id) {
+                  <option [value]="measureOption.id">{{ measureOption.name }}</option>
+                }
+              </select>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="row mb-3">
+        <button class="btn btn-primary" [disabled]="isLoading()" (click)="onAddNewItem()">Добавить ресурс</button>
+      </div>
+
+      <div class="mb-3">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!editForm.valid || isLoading()"
+          (click)="onSubmit()">{{ isEditingExisting() ? 'Сохранить' : 'Добавить' }}</button>
+        @if (isEditingExisting()) {
+          <button
+            type="submit"
+            class="btn btn-danger ms-2"
+            (click)="onDelete()"
+            [disabled]="isLoading()">Удалить</button>
+        }
+      </div>
+    </form>
+</div>

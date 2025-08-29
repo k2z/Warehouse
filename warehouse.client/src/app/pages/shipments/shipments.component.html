@@ -1,1 +1,15 @@
-<p>shipments works!</p>
+<div class="container">
+  <p class="text-start h1">Отгрузки</p>
+
+  <app-grid
+    [items]="items$ | async"
+    [total]="(itemsCount$ | async) ?? 0"
+    [columns]="columns"
+    [loading]="isLoading$ | async"
+    [lazyLoad]="lazyLoad"
+    [isActionsDisplayed]="true"
+    [addActionTitle]="'Добавить документ отгрузки'"
+    (onAddClick)="onClickAddNewShipment()"
+    (onRowClick)="onClickShipment($event)">
+  </app-grid>
+</div>
