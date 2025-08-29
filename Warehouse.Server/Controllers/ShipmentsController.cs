@@ -22,7 +22,7 @@ namespace Warehouse.Server.Controllers
       var result = await context.Shipments.Select((i) => i.Number).ToListAsync();
       return Ok(result);
     }
-    
+
     [HttpGet("all")]
     public async Task<ActionResult<Model.DataTransferObjects.Page<Model.DataTransferObjects.Shipment>>> ListIncomes(
       [FromQuery(Name = "filter")] IEnumerable<FilteringData>? filter,
@@ -87,7 +87,7 @@ namespace Warehouse.Server.Controllers
 
     [HttpPost("add")]
     public async Task<ActionResult<Model.DataTransferObjects.Income>> CreateShipment(
-      [FromBody]Model.DataTransferObjects.Shipment newShipment
+      [FromBody] Model.DataTransferObjects.Shipment newShipment
     )
     {
       if (newShipment.Number == null)
@@ -120,11 +120,81 @@ namespace Warehouse.Server.Controllers
       };
       await context.Shipments.AddAsync(newShipmentEntity);
       await context.SaveChangesAsync();
-      var result = await context.Incomes.SingleAsync(i => i.Number == newShipment.Number);
-      return Model.DataTransferObjects.Income.FromEntity(result);
+      var result = await context.Shipments.SingleAsync(i => i.Number == newShipment.Number);
+      return Ok(Model.DataTransferObjects.Shipment.FromEntity(result));
     }
 
     // TODO update
     // TODO delete
+    [HttpPost("update")]
+    public async Task<ActionResult<Model.DataTransferObjects.Shipment>> UpdateShipment(Model.DataTransferObjects.Shipment updated)
+    {
+      if (!updated.Id.HasValue)
+      {
+        return BadRequest("id is null");
+      }
+      if (updated.Items == null)
+      {
+        return BadRequest("items is null");
+      }
+      var existing = await context.Shipments.SingleAsync(i => i.Id == updated.Id);
+      existing.Number = updated.Number ?? existing.Number;
+      existing.State = updated.State.HasValue ? updated.State.Value : existing.State;
+      if (updated.ClientId.HasValue && updated.ClientId != existing.ClientId)
+      {
+        existing.ClientId = updated.ClientId.Value;
+        existing.Client = context.Clients.Single(c => c.Id == updated.ClientId);
+      }
+
+      var shipmentResourcesToRemove = existing.ShipmentResources.Where(sr => !updated.Items.Any(ui => ui.Id == sr.Id));
+      foreach (var removingResource in shipmentResourcesToRemove)
+      {
+        existing.ShipmentResources.Remove(removingResource);
+      }
+      foreach (var updatingResourceDto in updated.Items)
+      {
+        var existingShipmentResource = existing.ShipmentResources.FirstOrDefault(ir => ir.Id == updatingResourceDto.Id);
+        if (existingShipmentResource == null)
+        {
+          var newShipmentResource = new ShipmentResource
+          {
+            Count = updatingResourceDto.Count!.Value,
+            MeasureId = updatingResourceDto.MeasureId!.Value,
+            Measure = context.Measures.Single(m => m.Id == updatingResourceDto.MeasureId!.Value),
+            ResourceId = updatingResourceDto.ResourceId!.Value,
+            Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value),
+          };
+          existing.ShipmentResources.Add(newShipmentResource);
+          continue;
+        }
+        existingShipmentResource.Count = updatingResourceDto.Count!.Value;
+        if (existingShipmentResource.ResourceId != updatingResourceDto.ResourceId)
+        {
+          existingShipmentResource.ResourceId = updatingResourceDto.ResourceId!.Value;
+          existingShipmentResource.Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value);
+        }
+        if (existingShipmentResource.MeasureId != updatingResourceDto.MeasureId)
+        {
+          existingShipmentResource.MeasureId = updatingResourceDto.MeasureId!.Value;
+          existingShipmentResource.Measure = context.Measures.Single(r => r.Id == updatingResourceDto.MeasureId!.Value);
+        }
+      }
+      await context.SaveChangesAsync();
+      var result = await context.Shipments.SingleAsync(i => i.Id == updated.Id);
+      return Ok(Model.DataTransferObjects.Shipment.FromEntity(result));
+    }
+
+    [HttpPost("delete")]
+    public async Task<IActionResult> DeleteIncome(Model.DataTransferObjects.Shipment deleted)
+    {
+      if (deleted.Id == null)
+      {
+        return BadRequest("deleted.id is null");
+      }
+      var entity = await context.Shipments.SingleAsync(r => r.Id == deleted.Id);
+      context.Shipments.Remove(entity);
+      await context.SaveChangesAsync();
+      return Ok();
+    }
   }
 }

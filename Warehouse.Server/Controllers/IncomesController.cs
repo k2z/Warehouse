@@ -22,7 +22,7 @@ namespace Warehouse.Server.Controllers
       var result = await context.Incomes.Select((i) => i.Number).ToListAsync();
       return Ok(result);
     }
-    
+
     [HttpGet("all")]
     public async Task<ActionResult<Model.DataTransferObjects.Page<Model.DataTransferObjects.Income>>> ListIncomes(
       [FromQuery(Name = "filter")] IEnumerable<FilteringData>? filter,
@@ -85,7 +85,7 @@ namespace Warehouse.Server.Controllers
 
     [HttpPost("add")]
     public async Task<ActionResult<Model.DataTransferObjects.Income>> CreateIncome(
-      [FromBody]Model.DataTransferObjects.Income newIncome
+      [FromBody] Model.DataTransferObjects.Income newIncome
     )
     {
       if (newIncome.Number == null)
@@ -112,10 +112,72 @@ namespace Warehouse.Server.Controllers
       await context.Incomes.AddAsync(newIncomeEntity);
       await context.SaveChangesAsync();
       var result = await context.Incomes.SingleAsync(i => i.Number == newIncome.Number);
-      return Model.DataTransferObjects.Income.FromEntity(result);
+      return Ok(Model.DataTransferObjects.Income.FromEntity(result));
     }
 
-    // TODO update
-    // TODO delete
+    [HttpPost("update")]
+    public async Task<ActionResult<Model.DataTransferObjects.Income>> UpdateIncome(Model.DataTransferObjects.Income updated)
+    {
+      if (!updated.Id.HasValue)
+      {
+        return BadRequest("id is null");
+      }
+      if (updated.Items == null)
+      {
+        return BadRequest("items is null");
+      }
+      var existing = await context.Incomes.SingleAsync(i => i.Id == updated.Id);
+      existing.Number = updated.Number ?? existing.Number;
+
+      var incomeResourcesToRemove = existing.IncomeResources.Where(ir => !updated.Items.Any(ui => ui.Id == ir.Id));
+      foreach (var removingResource in incomeResourcesToRemove)
+      {
+        existing.IncomeResources.Remove(removingResource);
+      }
+      foreach (var updatingResourceDto in updated.Items)
+      {
+        var existingIncomeResource = existing.IncomeResources.FirstOrDefault(ir => ir.Id == updatingResourceDto.Id);
+        if (existingIncomeResource == null)
+        {
+          var newIncomeResource = new IncomeResource
+          {
+            Count = updatingResourceDto.Count!.Value,
+            MeasureId = updatingResourceDto.MeasureId!.Value,
+            Measure = context.Measures.Single(m => m.Id == updatingResourceDto.MeasureId!.Value),
+            ResourceId = updatingResourceDto.ResourceId!.Value,
+            Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value),
+          };
+          existing.IncomeResources.Add(newIncomeResource);
+          continue;
+        }
+        existingIncomeResource.Count = updatingResourceDto.Count!.Value;
+        if (existingIncomeResource.ResourceId != updatingResourceDto.ResourceId)
+        {
+          existingIncomeResource.ResourceId = updatingResourceDto.ResourceId!.Value;
+          existingIncomeResource.Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value);
+        }
+        if (existingIncomeResource.MeasureId != updatingResourceDto.MeasureId)
+        {
+          existingIncomeResource.MeasureId = updatingResourceDto.MeasureId!.Value;
+          existingIncomeResource.Measure = context.Measures.Single(r => r.Id == updatingResourceDto.MeasureId!.Value);
+        }
+      }
+      await context.SaveChangesAsync();
+      var result = await context.Incomes.SingleAsync(i => i.Id == updated.Id);
+      return Ok(Model.DataTransferObjects.Income.FromEntity(result));
+    }
+
+    [HttpPost("delete")]
+    public async Task<IActionResult> DeleteIncome(Model.DataTransferObjects.Income deleted)
+    {
+      if (deleted.Id == null)
+      {
+        return BadRequest("deleted.id is null");
+      }
+      var entity = await context.Incomes.SingleAsync(r => r.Id == deleted.Id);
+      context.Incomes.Remove(entity);
+      await context.SaveChangesAsync();
+      return Ok();
+    }
   }
 }

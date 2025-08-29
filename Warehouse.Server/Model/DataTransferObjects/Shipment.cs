@@ -1,3 +1,5 @@
+using Warehouse.Server.Model.Entities;
+
 namespace Warehouse.Server.Model.DataTransferObjects
 {
     public class ShipmentResource
@@ -15,6 +17,7 @@ namespace Warehouse.Server.Model.DataTransferObjects
         public int? Id { get; set; }
         public string? Number { get; set; }
         public DateOnly? Date { get; set; }
+        public ShipmentState? State { get; set; }
         public int? ClientId { get; set; }
         public string? Client { get; set; }
         public IEnumerable<ShipmentResource>? Items { get; set; }
