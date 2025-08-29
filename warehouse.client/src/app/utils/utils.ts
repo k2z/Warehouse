@@ -74,7 +74,6 @@ export function gridFilterToBeFilter(primengFilter: GridFilters): Array<BeFilter
         }
       }
     } else if (fieldFilter && fieldFilter.matchMode && fieldFilter.value !== null) {
-      console.log('item', fieldFilter);
       switch (fieldFilter.matchMode) {
         case 'in':
           if (Array.isArray(fieldFilter.value) && fieldFilter.value.length > 0) {

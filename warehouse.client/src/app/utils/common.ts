@@ -12,6 +12,8 @@ import { Client } from "../state/clients/client";
 import { selectMeasuresLoading } from "../state/measures/measures.selector";
 import {selectIncomesLoadingNumbers} from "../state/incomes/incomes.selector";
 import {IncomesActions} from "../state/incomes/incomes.actions";
+import { selectShipmentsLoadingNumbers } from "../state/shipments/shipment.selector";
+import { ShipmentsActions } from "../state/shipments/shipment.actions";
 
 export function fetchActiveResources(store: Store, http: HttpClient) {
   store.select(selectResourcesLoading).pipe(
@@ -100,6 +102,28 @@ export function fetchIncomeNumbers(store: Store, http: HttpClient) {
   ).subscribe({
     next: (value) => {
       store.dispatch(IncomesActions.loadedIncomeNumbers({ items: value }));
+    },
+    error: (err) => {
+      console.error(err);
+    },
+    complete: () => {
+      //
+    }
+  })
+}
+
+export function fetchShipmentNumbers(store: Store, http: HttpClient) {
+  store.select(selectShipmentsLoadingNumbers).pipe(
+    takeWhile(isLoading => isLoading === null),
+    tap((val) => {
+      setTimeout(() => { store.dispatch(ShipmentsActions.loadingShipmentNumbers({})); });
+    }),
+    mergeMap((val) => {
+      return http.get<Array<string>>('api/shipments/allnumbers');
+    }),
+  ).subscribe({
+    next: (value) => {
+      store.dispatch(ShipmentsActions.loadedShipmentNumbers({ items: value }));
     },
     error: (err) => {
       console.error(err);

@@ -10,6 +10,8 @@ import { ResourceStatusPipe } from '../../pipes/resource-status.pipe';
 import { MeasureStatusPipe } from '../../pipes/measure-status.pipe';
 import { ClientStatusPipe } from '../../pipes/client-status.pipe';
 import { DateOnlyPipe } from '../../pipes/date-only.pipe';
+import { ClientNameObservablePipe } from '../../pipes/client-name-observable.pipe';
+import { CommonModule } from '@angular/common';
 
 export enum ColumnType {
   TEXT,
@@ -19,6 +21,7 @@ export enum ColumnType {
   DATEONLY,
   RESOURCES,
   MEASURES,
+  CLIENT,
 }
 
 export enum FilteringType {
@@ -48,6 +51,7 @@ export type Column = {
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.css',
   imports: [
+    CommonModule,
     FormsModule,
     TableModule,
     ButtonModule,
@@ -58,6 +62,7 @@ export type Column = {
     MeasureStatusPipe,
     ClientStatusPipe,
     DateOnlyPipe,
+    ClientNameObservablePipe,
   ],
 })
 export class GridComponent {

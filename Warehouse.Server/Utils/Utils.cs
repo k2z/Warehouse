@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Warehouse.Server.Utils
 {
@@ -60,7 +61,6 @@ namespace Warehouse.Server.Utils
                 {
                   _ when propertyType == typeof(string) => Expression.Constant(filter.Value),
                   _ when propertyType == typeof(DateOnly) => Expression.Constant(filter.DateValue),
-                  
                   _ => throw new ArgumentOutOfRangeException()
                 };
                 var expression = Expression.Equal(member, constant);
@@ -69,10 +69,18 @@ namespace Warehouse.Server.Utils
               }
               case FilteringType.In:
               {
-                Expression<Func<IEnumerable<string>, bool>> containsExpression =
-                  (IEnumerable<string> q) => q.Contains((string)null);
-                var containsMethod = (containsExpression.Body as MethodCallExpression).Method;
-                var arrayConstant = Expression.Constant(filter.Values);
+                var containsMethod = propertyType switch
+                {
+                  _ when propertyType == typeof(string) => Utils.ContainsMethod<string>(),
+                  _ when propertyType == typeof(int) => Utils.ContainsIntMethod(),
+                  _ => throw new ArgumentOutOfRangeException()
+                };
+                var arrayConstant = propertyType switch
+                {
+                  _ when propertyType == typeof(string) => Expression.Constant(filter.Values),
+                  _ when propertyType == typeof(int) => Expression.Constant(filter.NumberValues),
+                  _ => throw new ArgumentOutOfRangeException()
+                };
                 var expression = Expression.Call(containsMethod, arrayConstant, member);
                 expressionBody = expressionBody == null ? expression : Expression.AndAlso(expressionBody, expression);
                 break;
@@ -106,6 +114,18 @@ namespace Warehouse.Server.Utils
         };
       }
       return Expression.Lambda<Func<T, bool>>(expressionBody, param);
+    }
+
+    private static MethodInfo ContainsMethod<T>() where T : class
+    {
+      Expression<Func<IEnumerable<T>, bool>> containsExpression = (IEnumerable<T> q) => q.Contains((T)null);
+      return (containsExpression.Body as MethodCallExpression).Method;
+    }
+    
+    private static MethodInfo ContainsIntMethod()
+    {
+      Expression<Func<IEnumerable<int>, bool>> containsExpression = (IEnumerable<int> q) => q.Contains(0);
+      return (containsExpression.Body as MethodCallExpression).Method;
     }
   }
 }

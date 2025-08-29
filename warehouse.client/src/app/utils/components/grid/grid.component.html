@@ -136,6 +136,9 @@
           @case(ColumnType.MEASURES) {
             <td>{{ item[columnData.field].join(', ') || '-' }}</td>
           }
+          @case(ColumnType.CLIENT) {
+            <td>{{ item[columnData.field] | clientNameObservable | async }}</td>
+          }
           @default {
             <td><span>TODO</span></td>
           }

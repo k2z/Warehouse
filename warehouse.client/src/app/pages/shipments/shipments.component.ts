@@ -13,7 +13,7 @@ import { selectClients, selectClientsLoading } from '../../state/clients/clients
 import { TableLazyLoadEvent, TableRowSelectEvent } from 'primeng/table';
 import { gridFilterToBeFilter, Page } from '../../utils/utils';
 import { ShipmentsActions } from '../../state/shipments/shipment.actions';
-import { fetchActiveClients, fetchActiveMeasures, fetchActiveResources, fetchIncomeNumbers } from '../../utils/common';
+import { fetchActiveClients, fetchActiveMeasures, fetchActiveResources, fetchIncomeNumbers, fetchShipmentNumbers } from '../../utils/common';
 
 export type ShipmentDisplayItem = Shipment & {
   includingResources: Array<string>,
@@ -52,8 +52,8 @@ export class ShipmentsComponent implements OnInit, OnDestroy {
       title: 'Номер',
     },
     {
-      field: 'client',
-      type: ColumnType.TEXT,
+      field: 'clientId',
+      type: ColumnType.CLIENT,
       filtering: FilteringType.MULTISELECT,
       selectOptions: [],
       title: 'Клиент',
@@ -96,9 +96,9 @@ export class ShipmentsComponent implements OnInit, OnDestroy {
         this.store.select(selectClientsLoading),
         this.store.select(selectShipmentsLoadingNumbers),
       ],
-      (loadingIncomes, loadingResources, loadingMeasures, loadingClients, loadingIncomesNumbers) => {
-        return (loadingIncomes ?? true) ||
-          (loadingIncomesNumbers ?? true) ||
+      (loadingShipments, loadingResources, loadingMeasures, loadingClients, loadingShipmentsNumbers) => {
+        return (loadingShipments ?? true) ||
+          (loadingShipmentsNumbers ?? true) ||
           (loadingResources ?? true) ||
           (loadingMeasures ?? true) ||
           (loadingClients ?? true);
@@ -152,7 +152,7 @@ export class ShipmentsComponent implements OnInit, OnDestroy {
     this.store.select(selectClients).pipe(
       takeUntil(this.destroyed$.asObservable())
     ).subscribe((items) => {
-      const colSetting = this.columns.find(c => c.field === 'client');
+      const colSetting = this.columns.find(c => c.field === 'clientId');
       if (colSetting) {
         colSetting.selectOptions = items.map((item) => { return { title: item.name, value: item.id }; });
       }
@@ -160,7 +160,7 @@ export class ShipmentsComponent implements OnInit, OnDestroy {
     fetchActiveClients(this.store, this.http);
     fetchActiveResources(this.store, this.http);
     fetchActiveMeasures(this.store, this.http);
-    fetchIncomeNumbers(this.store, this.http);
+    fetchShipmentNumbers(this.store, this.http);
   }
 
   ngOnDestroy(): void {
