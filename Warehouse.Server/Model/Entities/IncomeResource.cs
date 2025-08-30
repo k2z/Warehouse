@@ -1,6 +1,6 @@
 namespace Warehouse.Server.Model.Entities
 {
-  public class IncomeResource
+  public class IncomeResource: IDocumentItem
   {
     public int Id { get; set; }
     public double Count { get; set; }

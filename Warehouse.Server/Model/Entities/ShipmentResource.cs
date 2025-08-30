@@ -1,6 +1,6 @@
 namespace Warehouse.Server.Model.Entities
 {
-  public class ShipmentResource
+  public class ShipmentResource: IDocumentItem
   {
     public int Id { get; set; }
     public double Count { get; set; }

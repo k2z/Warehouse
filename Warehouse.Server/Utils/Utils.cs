@@ -14,8 +14,6 @@ namespace Warehouse.Server.Utils
       return char.ToUpper(source[0]) + source.Substring(1);
     }
 
-    public static readonly List<string> SpecificFilterFields = ["includingResources", "includingMeasures"];
-
     public static Expression<Func<T, bool>> ParseFilterExpression<T>(IEnumerable<FilteringData> filters)
     {
       if (filters?.Any() != true)

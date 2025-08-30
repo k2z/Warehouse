@@ -100,15 +100,13 @@ namespace Warehouse.Server.Controllers
       {
         Number = newIncome.Number,
         Date = newIncome.Date ?? DateOnly.FromDateTime(DateTime.Now),
-        IncomeResources = newIncome.Items.Select(ir => new Model.Entities.IncomeResource
-        {
-          Count = ir.Count!.Value,
-          MeasureId = ir.MeasureId!.Value,
-          Measure = context.Measures.Single(m => m.Id == ir.MeasureId!.Value),
-          ResourceId = ir.ResourceId!.Value,
-          Resource = context.Resources.Single(r => r.Id == ir.ResourceId!.Value),
-        }).ToList()
       };
+      var changes = DocumentProcessing.ApplyChanges(
+        newIncomeEntity.IncomeResources,
+        newIncome.Items,
+        context.Measures,
+        context.Resources);
+      await DocumentProcessing.ApplyChangesToBalances(changes, context.Balances);
       await context.Incomes.AddAsync(newIncomeEntity);
       await context.SaveChangesAsync();
       var result = await context.Incomes.SingleAsync(i => i.Number == newIncome.Number);
@@ -134,40 +132,14 @@ namespace Warehouse.Server.Controllers
         .SingleAsync(i => i.Id == updated.Id);
       existing.Number = updated.Number ?? existing.Number;
 
-      var incomeResourcesToRemove = existing.IncomeResources.Where(ir => !updated.Items.Any(ui => ui.Id == ir.Id));
-      foreach (var removingResource in incomeResourcesToRemove)
-      {
-        existing.IncomeResources.Remove(removingResource);
-      }
-      foreach (var updatingResourceDto in updated.Items)
-      {
-        var existingIncomeResource = existing.IncomeResources.FirstOrDefault(ir => ir.Id == updatingResourceDto.Id);
-        if (existingIncomeResource == null)
-        {
-          var newIncomeResource = new IncomeResource
-          {
-            Count = updatingResourceDto.Count!.Value,
-            MeasureId = updatingResourceDto.MeasureId!.Value,
-            Measure = context.Measures.Single(m => m.Id == updatingResourceDto.MeasureId!.Value),
-            ResourceId = updatingResourceDto.ResourceId!.Value,
-            Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value),
-          };
-          existing.IncomeResources.Add(newIncomeResource);
-          continue;
-        }
-        existingIncomeResource.Count = updatingResourceDto.Count!.Value;
-        if (existingIncomeResource.ResourceId != updatingResourceDto.ResourceId)
-        {
-          existingIncomeResource.ResourceId = updatingResourceDto.ResourceId!.Value;
-          existingIncomeResource.Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value);
-        }
-        if (existingIncomeResource.MeasureId != updatingResourceDto.MeasureId)
-        {
-          existingIncomeResource.MeasureId = updatingResourceDto.MeasureId!.Value;
-          existingIncomeResource.Measure = context.Measures.Single(r => r.Id == updatingResourceDto.MeasureId!.Value);
-        }
-      }
+      var changes = DocumentProcessing.ApplyChanges(
+        existing.IncomeResources,
+        updated.Items,
+        context.Measures,
+        context.Resources);
+      await DocumentProcessing.ApplyChangesToBalances(changes, context.Balances);
       await context.SaveChangesAsync();
+      
       var result = await context.Incomes
         .Include(income => income.IncomeResources)
           .ThenInclude(ir => ir.Measure)
@@ -184,7 +156,13 @@ namespace Warehouse.Server.Controllers
       {
         return BadRequest("deleted.id is null");
       }
-      var entity = await context.Incomes.SingleAsync(r => r.Id == deleted.Id);
+      var entity = await context.Incomes.Include(i => i.IncomeResources).SingleAsync(r => r.Id == deleted.Id);
+      var changes = DocumentProcessing.ApplyChanges<IncomeResource, Model.DataTransferObjects.IncomeResource>(
+        entity.IncomeResources,
+        [],
+        context.Measures,
+        context.Resources);
+      await DocumentProcessing.ApplyChangesToBalances(changes, context.Balances);
       context.Incomes.Remove(entity);
       await context.SaveChangesAsync();
       return Ok();

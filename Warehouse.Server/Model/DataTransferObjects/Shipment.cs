@@ -2,7 +2,7 @@ using Warehouse.Server.Model.Entities;
 
 namespace Warehouse.Server.Model.DataTransferObjects
 {
-    public class ShipmentResource
+    public class ShipmentResource: IDocumentItem
     {
         public int? Id { get; set; }
         public double? Count { get; set; }

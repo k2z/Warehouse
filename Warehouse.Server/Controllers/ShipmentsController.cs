@@ -109,23 +109,26 @@ namespace Warehouse.Server.Controllers
         Date = newShipment.Date ?? DateOnly.FromDateTime(DateTime.Now),
         ClientId = newShipment.ClientId.Value,
         Client = context.Clients.Single(c => c.Id == newShipment.ClientId),
-        ShipmentResources = newShipment.Items.Select(ir => new Model.Entities.ShipmentResource()
-        {
-          Count = ir.Count!.Value,
-          MeasureId = ir.MeasureId!.Value,
-          Measure = context.Measures.Single(m => m.Id == ir.MeasureId!.Value),
-          ResourceId = ir.ResourceId!.Value,
-          Resource = context.Resources.Single(r => r.Id == ir.ResourceId!.Value),
-        }).ToList()
+        // ShipmentResources = newShipment.Items.Select(ir => new Model.Entities.ShipmentResource()
+        // {
+        //   Count = ir.Count!.Value,
+        //   MeasureId = ir.MeasureId!.Value,
+        //   Measure = context.Measures.Single(m => m.Id == ir.MeasureId!.Value),
+        //   ResourceId = ir.ResourceId!.Value,
+        //   Resource = context.Resources.Single(r => r.Id == ir.ResourceId!.Value),
+        // }).ToList()
       };
+      var changes = DocumentProcessing.ApplyChanges(
+        newShipmentEntity.ShipmentResources,
+        newShipment.Items,
+        context.Measures,
+        context.Resources);
       await context.Shipments.AddAsync(newShipmentEntity);
       await context.SaveChangesAsync();
       var result = await context.Shipments.SingleAsync(i => i.Number == newShipment.Number);
       return Ok(Model.DataTransferObjects.Shipment.FromEntity(result));
     }
-
-    // TODO update
-    // TODO delete
+    
     [HttpPost("update")]
     public async Task<ActionResult<Model.DataTransferObjects.Shipment>> UpdateShipment(Model.DataTransferObjects.Shipment updated)
     {
@@ -152,41 +155,11 @@ namespace Warehouse.Server.Controllers
         existing.Client = context.Clients.Single(c => c.Id == updated.ClientId);
       }
 
-      var shipmentResourcesToRemove = existing.ShipmentResources
-        .Where(sr => updated.Items.All(ui => ui.Id != sr.Id))
-        .ToList();
-      foreach (var removingResource in shipmentResourcesToRemove)
-      {
-        existing.ShipmentResources.Remove(removingResource);
-      }
-      foreach (var updatingResourceDto in updated.Items)
-      {
-        var existingShipmentResource = existing.ShipmentResources.FirstOrDefault(ir => ir.Id == updatingResourceDto.Id);
-        if (existingShipmentResource == null)
-        {
-          var newShipmentResource = new ShipmentResource
-          {
-            Count = updatingResourceDto.Count!.Value,
-            MeasureId = updatingResourceDto.MeasureId!.Value,
-            Measure = context.Measures.Single(m => m.Id == updatingResourceDto.MeasureId!.Value),
-            ResourceId = updatingResourceDto.ResourceId!.Value,
-            Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value),
-          };
-          existing.ShipmentResources.Add(newShipmentResource);
-          continue;
-        }
-        existingShipmentResource.Count = updatingResourceDto.Count!.Value;
-        if (existingShipmentResource.ResourceId != updatingResourceDto.ResourceId)
-        {
-          existingShipmentResource.ResourceId = updatingResourceDto.ResourceId!.Value;
-          existingShipmentResource.Resource = context.Resources.Single(r => r.Id == updatingResourceDto.ResourceId!.Value);
-        }
-        if (existingShipmentResource.MeasureId != updatingResourceDto.MeasureId)
-        {
-          existingShipmentResource.MeasureId = updatingResourceDto.MeasureId!.Value;
-          existingShipmentResource.Measure = context.Measures.Single(r => r.Id == updatingResourceDto.MeasureId!.Value);
-        }
-      }
+      var changes = DocumentProcessing.ApplyChanges(
+        existing.ShipmentResources,
+        updated.Items,
+        context.Measures,
+        context.Resources);
       await context.SaveChangesAsync();
       var result = await context.Shipments
         .Include(s => s.Client)
