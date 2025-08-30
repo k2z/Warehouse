@@ -137,16 +137,24 @@ namespace Warehouse.Server.Controllers
       {
         return BadRequest("items is null");
       }
-      var existing = await context.Shipments.SingleAsync(i => i.Id == updated.Id);
+      var existing = await context.Shipments
+        .Include(s => s.Client)
+        .Include(shipment => shipment.ShipmentResources)
+          .ThenInclude(sr => sr.Measure)
+        .Include(shipment => shipment.ShipmentResources)
+          .ThenInclude(sr => sr.Resource)
+        .SingleAsync(i => i.Id == updated.Id);
       existing.Number = updated.Number ?? existing.Number;
-      existing.State = updated.State.HasValue ? updated.State.Value : existing.State;
+      existing.State = updated.State ?? existing.State;
       if (updated.ClientId.HasValue && updated.ClientId != existing.ClientId)
       {
         existing.ClientId = updated.ClientId.Value;
         existing.Client = context.Clients.Single(c => c.Id == updated.ClientId);
       }
 
-      var shipmentResourcesToRemove = existing.ShipmentResources.Where(sr => !updated.Items.Any(ui => ui.Id == sr.Id));
+      var shipmentResourcesToRemove = existing.ShipmentResources
+        .Where(sr => updated.Items.All(ui => ui.Id != sr.Id))
+        .ToList();
       foreach (var removingResource in shipmentResourcesToRemove)
       {
         existing.ShipmentResources.Remove(removingResource);
@@ -180,7 +188,13 @@ namespace Warehouse.Server.Controllers
         }
       }
       await context.SaveChangesAsync();
-      var result = await context.Shipments.SingleAsync(i => i.Id == updated.Id);
+      var result = await context.Shipments
+        .Include(s => s.Client)
+        .Include(shipment => shipment.ShipmentResources)
+          .ThenInclude(sr => sr.Measure)
+        .Include(shipment => shipment.ShipmentResources)
+          .ThenInclude(sr => sr.Resource)
+        .SingleAsync(i => i.Id == updated.Id);
       return Ok(Model.DataTransferObjects.Shipment.FromEntity(result));
     }
 
