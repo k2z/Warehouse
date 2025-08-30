@@ -80,24 +80,33 @@ namespace Warehouse.Server.Model
       {
         entity.HasKey(e => e.Id);
         entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        entity.HasIndex(e => new { e.ResourceId, e.MeasureId })
+          .IsUnique();
         entity.HasOne(e => e.Resource).WithMany(r => r.Balances).HasForeignKey(e => e.ResourceId).IsRequired();
         entity.HasOne(e => e.Measure).WithMany(r => r.Balances).HasForeignKey(e => e.MeasureId).IsRequired();
+        entity.ToTable(t => t.HasCheckConstraint("CHECK_Balance_NonNegative", "Count >= 0"));
       });
 
       modelBuilder.Entity<ShipmentResource>(entity =>
       {
         entity.HasKey(e => e.Id);
         entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        entity.HasIndex(e => new { e.ResourceId, e.MeasureId, e.ShipmentId })
+          .IsUnique();
         entity.HasOne(e => e.Resource).WithMany(r => r.ShipmentResources).HasForeignKey(e => e.ResourceId).IsRequired();
         entity.HasOne(e => e.Measure).WithMany(m => m.ShipmentResources).HasForeignKey(e => e.MeasureId).IsRequired();
+        entity.ToTable(t => t.HasCheckConstraint("CHECK_Shipment_NonNegative", "Count >= 0"));
       });
 
       modelBuilder.Entity<IncomeResource>(entity =>
       {
         entity.HasKey(e => e.Id);
         entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        entity.HasIndex(e => new { e.ResourceId, e.MeasureId, e.IncomeId })
+          .IsUnique();
         entity.HasOne(e => e.Resource).WithMany(r => r.IncomeResources).HasForeignKey(e => e.ResourceId).IsRequired();
         entity.HasOne(e => e.Measure).WithMany(m => m.IncomeResources).HasForeignKey(e => e.MeasureId).IsRequired();
+        entity.ToTable(t => t.HasCheckConstraint("CHECK_Income_NonNegative", "Count >= 0"));
       });
 
       base.OnModelCreating(modelBuilder);
