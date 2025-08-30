@@ -126,7 +126,12 @@ namespace Warehouse.Server.Controllers
       {
         return BadRequest("items is null");
       }
-      var existing = await context.Incomes.SingleAsync(i => i.Id == updated.Id);
+      var existing = await context.Incomes
+        .Include(income => income.IncomeResources)
+          .ThenInclude(ir => ir.Measure)
+        .Include(income => income.IncomeResources)
+          .ThenInclude(ir => ir.Resource)
+        .SingleAsync(i => i.Id == updated.Id);
       existing.Number = updated.Number ?? existing.Number;
 
       var incomeResourcesToRemove = existing.IncomeResources.Where(ir => !updated.Items.Any(ui => ui.Id == ir.Id));
@@ -163,7 +168,12 @@ namespace Warehouse.Server.Controllers
         }
       }
       await context.SaveChangesAsync();
-      var result = await context.Incomes.SingleAsync(i => i.Id == updated.Id);
+      var result = await context.Incomes
+        .Include(income => income.IncomeResources)
+          .ThenInclude(ir => ir.Measure)
+        .Include(income => income.IncomeResources)
+          .ThenInclude(ir => ir.Resource)
+        .SingleAsync(i => i.Id == updated.Id);
       return Ok(Model.DataTransferObjects.Income.FromEntity(result));
     }
 
