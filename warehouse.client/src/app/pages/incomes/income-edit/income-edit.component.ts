@@ -55,7 +55,12 @@ export class IncomeEditComponent implements OnInit, OnDestroy {
       if (value) {
         this.original = value;
         Object.keys(value).forEach((fieldName) => {
-          (this.model as any)[fieldName] = (value as any)[fieldName];
+          const valueField = (value as any)[fieldName];
+          if (Array.isArray(valueField)) {
+            (this.model as any)[fieldName] = [ ...valueField ];
+          } else {
+            (this.model as any)[fieldName] = valueField;
+          }
         });
         this.isEditingExisting.set(true);
       } else {
