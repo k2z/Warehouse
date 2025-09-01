@@ -2,9 +2,10 @@
     <p class="text-start h1">Баланс</p>
 
     <app-grid
-      [items]="items"
+      [items]="items$ | async"
+      [total]="(itemsCount$ | async) ?? 0"
       [columns]="columns"
-      [isActionsDisplayed]="false"
-      >
+      [loading]="isLoading$ | async"
+      [isActionsDisplayed]="false">
     </app-grid>
 </div>

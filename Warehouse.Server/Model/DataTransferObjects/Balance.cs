@@ -5,8 +5,8 @@ namespace Warehouse.Server.Model.DataTransferObjects
     public int? Id { get; set; }
     public double? Count { get; set; }
     public int? ResourceId { get; set; }
-    public Resource? Resource { get; set; } = null!;
+    public string? Resource { get; set; }
     public int? MeasureId { get; set; }
-    public Measure? Measure { get; set; } = null!;
+    public string? Measure { get; set; }
   }
 }

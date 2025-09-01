@@ -21,6 +21,7 @@ import { incomesReducer } from "./state/incomes/incomes.reducer";
 import { IncomeEditComponent } from "./pages/incomes/income-edit/income-edit.component";
 import { shipmentsReducer } from "./state/shipments/shipment.reducer";
 import { ShipmentEditComponent } from "./pages/shipments/shipment-edit/shipment-edit.component";
+import { balancesReducer } from "./state/balances/balances.reducer";
 
 const routes: Routes = [
   {
@@ -83,7 +84,7 @@ export const appConfig: ApplicationConfig = {
       clients: clientsReducer,
       incomes: incomesReducer,
       shipments: shipmentsReducer,
-      /* TODO */
+      balances: balancesReducer,
     }),
     provideAnimationsAsync(),
     providePrimeNG({

@@ -84,6 +84,29 @@
             class="btn btn-danger ms-2"
             (click)="onDelete()"
             [disabled]="isLoading()">Удалить</button>
+          @switch(model.state) {
+            @case(ShipmentState.Created) {
+              <button
+                type="submit"
+                class="btn btn-warning ms-2"
+                (click)="onUpdateStatus(ShipmentState.Signed)"
+                [disabled]="isLoading()">Подписать</button>
+            }
+            @case(ShipmentState.Rejected) {
+              <button
+                type="submit"
+                class="btn btn-warning ms-2"
+                (click)="onUpdateStatus(ShipmentState.Signed)"
+                [disabled]="isLoading()">Подписать</button>
+            }
+            @case(ShipmentState.Signed) {
+              <button
+                type="submit"
+                class="btn btn-success ms-2"
+                (click)="onUpdateStatus(ShipmentState.Rejected)"
+                [disabled]="isLoading()">Отозвать</button>
+            }
+          }
         }
       </div>
     </form>

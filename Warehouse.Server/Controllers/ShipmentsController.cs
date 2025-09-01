@@ -67,6 +67,7 @@ namespace Warehouse.Server.Controllers
         Date = i.Date,
         Client = i.Client.Name,
         ClientId = i.ClientId,
+        State = i.State,
         Items = i.ShipmentResources.Select((ir) => new Model.DataTransferObjects.ShipmentResource()
         {
           Id = ir.Id,
@@ -109,14 +110,6 @@ namespace Warehouse.Server.Controllers
         Date = newShipment.Date ?? DateOnly.FromDateTime(DateTime.Now),
         ClientId = newShipment.ClientId.Value,
         Client = context.Clients.Single(c => c.Id == newShipment.ClientId),
-        // ShipmentResources = newShipment.Items.Select(ir => new Model.Entities.ShipmentResource()
-        // {
-        //   Count = ir.Count!.Value,
-        //   MeasureId = ir.MeasureId!.Value,
-        //   Measure = context.Measures.Single(m => m.Id == ir.MeasureId!.Value),
-        //   ResourceId = ir.ResourceId!.Value,
-        //   Resource = context.Resources.Single(r => r.Id == ir.ResourceId!.Value),
-        // }).ToList()
       };
       var changes = DocumentProcessing.ApplyChanges(
         newShipmentEntity.ShipmentResources,
@@ -148,7 +141,7 @@ namespace Warehouse.Server.Controllers
           .ThenInclude(sr => sr.Resource)
         .SingleAsync(i => i.Id == updated.Id);
       existing.Number = updated.Number ?? existing.Number;
-      existing.State = updated.State ?? existing.State;
+      
       if (updated.ClientId.HasValue && updated.ClientId != existing.ClientId)
       {
         existing.ClientId = updated.ClientId.Value;
@@ -160,6 +153,24 @@ namespace Warehouse.Server.Controllers
         updated.Items,
         context.Measures,
         context.Resources);
+      if (updated.State == ShipmentState.Signed && ( existing.State == ShipmentState.Rejected || existing.State == ShipmentState.Created))
+      {
+        var shipmentChanges = new List<ResourceChange>();
+        foreach (var shipmentItem in existing.ShipmentResources)
+        {
+          shipmentChanges.Add(new ResourceChange(){ Change = -shipmentItem.Count, MeasureId = shipmentItem.MeasureId, ResourceId = shipmentItem.ResourceId });
+        }
+        await DocumentProcessing.ApplyChangesToBalances(shipmentChanges, context.Balances);
+      } else if (updated.State == ShipmentState.Rejected && existing.State == ShipmentState.Signed)
+      {
+        var shipmentChanges = new List<ResourceChange>();
+        foreach (var shipmentItem in existing.ShipmentResources)
+        {
+          shipmentChanges.Add(new ResourceChange(){ Change = shipmentItem.Count, MeasureId = shipmentItem.MeasureId, ResourceId = shipmentItem.ResourceId });
+        }
+        await DocumentProcessing.ApplyChangesToBalances(shipmentChanges, context.Balances);
+      }
+      existing.State = updated.State ?? existing.State;
       await context.SaveChangesAsync();
       var result = await context.Shipments
         .Include(s => s.Client)

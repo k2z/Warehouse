@@ -10,7 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
-    options.UseSqlite("Data Source=warehouselocal.db");
+    options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=WarehouseTestDb;Trusted_Connection=True;");
+    // options.UseSqlite("Data Source=warehouselocal.db");
 });
 
 var app = builder.Build();

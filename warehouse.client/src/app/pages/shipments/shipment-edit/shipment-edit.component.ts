@@ -37,6 +37,7 @@ export class ShipmentEditComponent implements OnInit, OnDestroy {
   availableClients: Signal<ReadonlyArray<Client> | undefined>;
   model: Shipment = { id: 0, date: dateToDateOnly(new Date()), items: [], number: '', clientId: 0, client: '', state: ShipmentState.Created, };
   private original?: Shipment;
+  ShipmentState = ShipmentState;
 
   constructor() {
     this.http = inject(HttpClient);
@@ -126,6 +127,26 @@ export class ShipmentEditComponent implements OnInit, OnDestroy {
     this.http.post<void>(`api/shipments/delete`, this.model).subscribe({
       next: () => {
         this.store.dispatch(ShipmentsActions.deleteShipment({ id: this.model.id }));
+        this.router.navigateByUrl('/shipments');
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        // TODO: notify error
+        console.error(err);
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  onUpdateStatus(newState: ShipmentState) {
+    this.isLoading.set(true);
+    Object.keys(this.original!).forEach((fieldName) => {
+      (this.model as any)[fieldName] = (this.original as any)[fieldName];
+    });
+    this.model.state = newState;
+    this.http.post<Shipment>(`api/shipments/update`, this.model).subscribe({
+      next: (result) => {
+        this.store.dispatch(ShipmentsActions.updateShipment({ item: result }));
         this.router.navigateByUrl('/shipments');
       },
       error: (err) => {

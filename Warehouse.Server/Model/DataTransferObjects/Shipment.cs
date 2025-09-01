@@ -31,6 +31,7 @@ namespace Warehouse.Server.Model.DataTransferObjects
                 Date = source.Date,
                 ClientId = source.ClientId,
                 Client = source.Client.Name,
+                State = source.State,
                 Items = source.ShipmentResources.Select((ir) => new ShipmentResource
                 {
                     Id = ir.Id,
